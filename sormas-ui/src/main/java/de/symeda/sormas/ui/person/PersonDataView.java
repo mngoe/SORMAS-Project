@@ -9,11 +9,13 @@ import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.immunization.ImmunizationListCriteria;
 import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.person.PersonReferenceDto;
 import de.symeda.sormas.api.user.UserRight;
 import de.symeda.sormas.ui.ControllerProvider;
 import de.symeda.sormas.ui.SubMenu;
+import de.symeda.sormas.ui.UserProvider;
 import de.symeda.sormas.ui.caze.caselink.CaseListComponent;
 import de.symeda.sormas.ui.contact.contactlink.ContactListComponent;
 import de.symeda.sormas.ui.events.eventParticipantLink.EventParticipantListComponent;
@@ -24,7 +26,7 @@ import de.symeda.sormas.ui.utils.CommitDiscardWrapperComponent;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DetailSubComponentWrapper;
 import de.symeda.sormas.ui.utils.LayoutUtil;
-import de.symeda.sormas.ui.utils.components.SideComponentLayout;
+import de.symeda.sormas.ui.utils.components.sidecomponent.SideComponentLayout;
 
 public class PersonDataView extends AbstractDetailView<PersonReferenceDto> {
 
@@ -107,8 +109,10 @@ public class PersonDataView extends AbstractDetailView<PersonReferenceDto> {
 
 		TravelEntryListComponent.addTravelEntryListComponent(layout, getReference());
 
-		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)) {
-			layout.addComponent(new SideComponentLayout(new ImmunizationListComponent(getReference().getUuid())), IMMUNIZATION_LOC);
+		if (FacadeProvider.getFeatureConfigurationFacade().isFeatureEnabled(FeatureType.IMMUNIZATION_MANAGEMENT)
+			&& UserProvider.getCurrent().hasUserRight(UserRight.IMMUNIZATION_VIEW)) {
+			final ImmunizationListCriteria immunizationListCriteria = new ImmunizationListCriteria.Builder(getReference()).build();
+			layout.addComponent(new SideComponentLayout(new ImmunizationListComponent(immunizationListCriteria)), IMMUNIZATION_LOC);
 		}
 	}
 

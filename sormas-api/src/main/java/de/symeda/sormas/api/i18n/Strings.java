@@ -32,6 +32,7 @@ public interface Strings {
 	String classificationGeneratedFor = "classificationGeneratedFor";
 	String classificationInfoNumberText = "classificationInfoNumberText";
 	String classificationInfoText = "classificationInfoText";
+	String classificationLastVaccinationDateWithin = "classificationLastVaccinationDateWithin";
 	String classificationNoneOf = "classificationNoneOf";
 	String classificationNotACase = "classificationNotACase";
 	String classificationNotWithin = "classificationNotWithin";
@@ -244,15 +245,19 @@ public interface Strings {
 	String errorCampaignDiagramTotalsCalculationError = "errorCampaignDiagramTotalsCalculationError";
 	String errorCaseDuplicateDeletion = "errorCaseDuplicateDeletion";
 	String errorCaseMerging = "errorCaseMerging";
+	String errorCaseNotEditable = "errorCaseNotEditable";
 	String errorConstraintViolation = "errorConstraintViolation";
 	String errorContactDuplicateDeletion = "errorContactDuplicateDeletion";
 	String errorContactMerging = "errorContactMerging";
+	String errorContactNotEditable = "errorContactNotEditable";
 	String errorCreatingTemplateDirectory = "errorCreatingTemplateDirectory";
 	String errorDeletingDocument = "errorDeletingDocument";
 	String errorDeletingDocumentTemplate = "errorDeletingDocumentTemplate";
 	String errorDocumentGeneration = "errorDocumentGeneration";
 	String errorEntityOutdated = "errorEntityOutdated";
 	String errorEventFromAnotherJurisdiction = "errorEventFromAnotherJurisdiction";
+	String errorEventNotEditable = "errorEventNotEditable";
+	String errorEventParticipantNotEditable = "errorEventParticipantNotEditable";
 	String errorEventUnlinkEventGroupFromAnotherJurisdiction = "errorEventUnlinkEventGroupFromAnotherJurisdiction";
 	String errorExternalSurveillanceToolCaseNotSharable = "errorExternalSurveillanceToolCaseNotSharable";
 	String errorExternalSurveillanceToolEventNotOwned = "errorExternalSurveillanceToolEventNotOwned";
@@ -276,6 +281,7 @@ public interface Strings {
 	String errorQuarantineOnlySupportedEntities = "errorQuarantineOnlySupportedEntities";
 	String errorReadingDocument = "errorReadingDocument";
 	String errorReadingTemplate = "errorReadingTemplate";
+	String errorSampleNotEditable = "errorSampleNotEditable";
 	String errorSetFeverRequired = "errorSetFeverRequired";
 	String errorSormasToSormasAccept = "errorSormasToSormasAccept";
 	String errorSormasToSormasAcceptNotPending = "errorSormasToSormasAcceptNotPending";
@@ -298,8 +304,12 @@ public interface Strings {
 	String errorViewNotFound = "errorViewNotFound";
 	String errorWasReported = "errorWasReported";
 	String errorWritingTemplate = "errorWritingTemplate";
-	String ExternalSurveillanceToolGateway_confirmDelete = "ExternalSurveillanceToolGateway.confirmDelete";
-	String ExternalSurveillanceToolGateway_confirmSend = "ExternalSurveillanceToolGateway.confirmSend";
+	String ExternalSurveillanceToolGateway_confirmDeleteCase = "ExternalSurveillanceToolGateway.confirmDeleteCase";
+	String ExternalSurveillanceToolGateway_confirmDeleteEvent = "ExternalSurveillanceToolGateway.confirmDeleteEvent";
+	String ExternalSurveillanceToolGateway_confirmSendCase = "ExternalSurveillanceToolGateway.confirmSendCase";
+	String ExternalSurveillanceToolGateway_confirmSendCases = "ExternalSurveillanceToolGateway.confirmSendCases";
+	String ExternalSurveillanceToolGateway_confirmSendEvent = "ExternalSurveillanceToolGateway.confirmSendEvent";
+	String ExternalSurveillanceToolGateway_confirmSendEvents = "ExternalSurveillanceToolGateway.confirmSendEvents";
 	String ExternalSurveillanceToolGateway_deletedAt = "ExternalSurveillanceToolGateway.deletedAt";
 	String ExternalSurveillanceToolGateway_notificationEntriesDeleted = "ExternalSurveillanceToolGateway.notificationEntriesDeleted";
 	String ExternalSurveillanceToolGateway_notificationEntriesSent = "ExternalSurveillanceToolGateway.notificationEntriesSent";
@@ -340,6 +350,7 @@ public interface Strings {
 	String headingCaseConversion = "headingCaseConversion";
 	String headingCaseData = "headingCaseData";
 	String headingCaseFatalityRate = "headingCaseFatalityRate";
+	String headingCaseFound = "headingCaseFound";
 	String headingCaseImport = "headingCaseImport";
 	String headingCaseResponsibleJurisidction = "headingCaseResponsibleJurisidction";
 	String headingCasesArchived = "headingCasesArchived";
@@ -420,6 +431,7 @@ public interface Strings {
 	String headingDearchiveTravelEntry = "headingDearchiveTravelEntry";
 	String headingDearchivingNotPossible = "headingDearchivingNotPossible";
 	String headingDefineOutbreakDistricts = "headingDefineOutbreakDistricts";
+	String headingDeleteVaccinations = "headingDeleteVaccinations";
 	String headingDisableLineListing = "headingDisableLineListing";
 	String headingDiscardUnsavedChanges = "headingDiscardUnsavedChanges";
 	String headingDocumentCreated = "headingDocumentCreated";
@@ -569,6 +581,7 @@ public interface Strings {
 	String headingPointOfEntryImport = "headingPointOfEntryImport";
 	String headingPointOfEntryInformation = "headingPointOfEntryInformation";
 	String headingPrescriptionsDeleted = "headingPrescriptionsDeleted";
+	String headingPreviousHospitalizations = "headingPreviousHospitalizations";
 	String headingQuarantineForCases = "headingQuarantineForCases";
 	String headingRecovery = "headingRecovery";
 	String headingReduceQuarantine = "headingReduceQuarantine";
@@ -833,6 +846,8 @@ public interface Strings {
 	String messageCaseDearchived = "messageCaseDearchived";
 	String messageCaseDuplicateDeleted = "messageCaseDuplicateDeleted";
 	String messageCaseExternalTokenWarning = "messageCaseExternalTokenWarning";
+	String messageCaseFound = "messageCaseFound";
+	String messageCaseFoundNoValidPathogenTest = "messageCaseFoundNoValidPathogenTest";
 	String messageCaseIncidenceUnsupportedAgeGroup = "messageCaseIncidenceUnsupportedAgeGroup";
 	String messageCaseReferredFromPoe = "messageCaseReferredFromPoe";
 	String messageCaseRelationToEventWithoutDisease = "messageCaseRelationToEventWithoutDisease";
@@ -897,6 +912,7 @@ public interface Strings {
 	String messageCountryDearchivingNotPossible = "messageCountryDearchivingNotPossible";
 	String messageCreateCollectionTask = "messageCreateCollectionTask";
 	String messageDatabaseExportFailed = "messageDatabaseExportFailed";
+	String messageDeleteImmunizationVaccinations = "messageDeleteImmunizationVaccinations";
 	String messageDeletionUnsupportedByExternalJournalWarning = "messageDeletionUnsupportedByExternalJournalWarning";
 	String messageDistrictArchived = "messageDistrictArchived";
 	String messageDistrictArchivingNotPossible = "messageDistrictArchivingNotPossible";
@@ -962,6 +978,7 @@ public interface Strings {
 	String messageImmunizationArchived = "messageImmunizationArchived";
 	String messageImmunizationDearchived = "messageImmunizationDearchived";
 	String messageImmunizationSaved = "messageImmunizationSaved";
+	String messageImmunizationSavedVaccinationStatusUpdated = "messageImmunizationSavedVaccinationStatusUpdated";
 	String messageImportCanceled = "messageImportCanceled";
 	String messageImportCanceledErrors = "messageImportCanceledErrors";
 	String messageImportError = "messageImportError";
@@ -988,6 +1005,7 @@ public interface Strings {
 	String messageMissingDateFilter = "messageMissingDateFilter";
 	String messageMissingEpiWeekFilter = "messageMissingEpiWeekFilter";
 	String messageNoCaseFound = "messageNoCaseFound";
+	String messageNoCaseFoundToLinkImmunization = "messageNoCaseFoundToLinkImmunization";
 	String messageNoCasesSelected = "messageNoCasesSelected";
 	String messageNoClinicalVisitsSelected = "messageNoClinicalVisitsSelected";
 	String messageNoContactsSelected = "messageNoContactsSelected";
@@ -1198,6 +1216,7 @@ public interface Strings {
 	String promptEventsSearchFieldEventGroups = "promptEventsSearchFieldEventGroups";
 	String promptEventsSearchFieldEventParticipants = "promptEventsSearchFieldEventParticipants";
 	String promptExternalIdExternalSurveillanceTool = "promptExternalIdExternalSurveillanceTool";
+	String promptExternalJournalForceDeletion = "promptExternalJournalForceDeletion";
 	String promptFilterByPeriod = "promptFilterByPeriod";
 	String promptImmunizationDateFrom = "promptImmunizationDateFrom";
 	String promptImmunizationDateTo = "promptImmunizationDateTo";
@@ -1236,6 +1255,7 @@ public interface Strings {
 	String pseudonymizedEntitiesSelectedWarning = "pseudonymizedEntitiesSelectedWarning";
 	String quarantineEnd = "quarantineEnd";
 	String quarterShort = "quarterShort";
+	String reloadPageToSeeChanges = "reloadPageToSeeChanges";
 	String reportedBy = "reportedBy";
 	String reportedOn = "reportedOn";
 	String setTo = "setTo";

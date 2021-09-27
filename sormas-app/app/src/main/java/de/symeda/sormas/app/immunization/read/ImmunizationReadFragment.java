@@ -16,6 +16,7 @@
 package de.symeda.sormas.app.immunization.read;
 
 import android.os.Bundle;
+import android.view.View;
 
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
@@ -24,8 +25,10 @@ import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.app.BaseReadFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.immunization.Immunization;
+import de.symeda.sormas.app.caze.read.CaseReadActivity;
 import de.symeda.sormas.app.databinding.FragmentImmunizationReadLayoutBinding;
 
 import static android.view.View.GONE;
@@ -49,11 +52,13 @@ public class ImmunizationReadFragment extends BaseReadFragment<FragmentImmunizat
 	@Override
 	protected void prepareFragmentData(Bundle savedInstanceState) {
 		record = getActivityRootData();
+		DatabaseHelper.getImmunizationDao().initVaccinations(record);
 	}
 
 	@Override
 	protected void onLayoutBinding(FragmentImmunizationReadLayoutBinding contentBinding) {
 		contentBinding.setData(record);
+		setUpControlListeners(contentBinding);
 	}
 
 	@Override
@@ -67,6 +72,14 @@ public class ImmunizationReadFragment extends BaseReadFragment<FragmentImmunizat
 				contentBinding.facilityTypeGroup.setValue(facilityType.getFacilityTypeGroup());
 			}
 		}
+
+		if (record.getRelatedCase() == null) {
+			contentBinding.openLinkedCase.setVisibility(View.GONE);
+		}
+	}
+
+	private void setUpControlListeners(FragmentImmunizationReadLayoutBinding contentBinding) {
+		contentBinding.openLinkedCase.setOnClickListener(v -> CaseReadActivity.startActivity(getActivity(), record.getRelatedCase().getUuid(), true));
 	}
 
 	@Override

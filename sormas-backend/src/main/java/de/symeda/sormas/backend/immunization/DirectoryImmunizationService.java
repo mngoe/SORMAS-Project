@@ -85,6 +85,7 @@ public class DirectoryImmunizationService extends AbstractCoreAdoService<Directo
 			person.get(Person.UUID),
 			person.get(Person.FIRST_NAME),
 			person.get(Person.LAST_NAME),
+			immunization.get(Immunization.DISEASE),
 			person.get(Person.APPROXIMATE_AGE),
 			person.get(Person.APPROXIMATE_AGE_TYPE),
 			person.get(Person.BIRTHDATE_DD),
@@ -110,6 +111,7 @@ public class DirectoryImmunizationService extends AbstractCoreAdoService<Directo
 				Expression<?> expression;
 				switch (sortProperty.propertyName) {
 				case ImmunizationIndexDto.UUID:
+				case ImmunizationIndexDto.DISEASE:
 				case ImmunizationIndexDto.MEANS_OF_IMMUNIZATION:
 				case ImmunizationIndexDto.IMMUNIZATION_STATUS:
 				case ImmunizationIndexDto.START_DATE:
@@ -243,9 +245,9 @@ public class DirectoryImmunizationService extends AbstractCoreAdoService<Directo
 		if (criteria.getMeansOfImmunization() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Immunization.MEANS_OF_IMMUNIZATION), criteria.getMeansOfImmunization()));
 		}
-		if (criteria.getManagementStatus() != null) {
+		if (criteria.getImmunizationManagementStatus() != null) {
 			filter = CriteriaBuilderHelper
-				.and(cb, filter, cb.equal(from.get(Immunization.IMMUNIZATION_MANAGEMENT_STATUS), criteria.getManagementStatus()));
+				.and(cb, filter, cb.equal(from.get(Immunization.IMMUNIZATION_MANAGEMENT_STATUS), criteria.getImmunizationManagementStatus()));
 		}
 		if (criteria.getImmunizationStatus() != null) {
 			filter = CriteriaBuilderHelper.and(cb, filter, cb.equal(from.get(Immunization.IMMUNIZATION_STATUS), criteria.getImmunizationStatus()));

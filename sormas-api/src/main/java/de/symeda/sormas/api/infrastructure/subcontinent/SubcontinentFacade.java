@@ -5,12 +5,13 @@ import java.util.List;
 
 import javax.ejb.Remote;
 
-import de.symeda.sormas.api.infrastructure.InfrastructureBaseFacade;
+import de.symeda.sormas.api.common.Page;
+import de.symeda.sormas.api.infrastructure.GeoLocationFacade;
 import de.symeda.sormas.api.infrastructure.country.CountryReferenceDto;
+import de.symeda.sormas.api.utils.SortProperty;
 
 @Remote
-public interface SubcontinentFacade
-	extends InfrastructureBaseFacade<SubcontinentDto, SubcontinentIndexDto, SubcontinentReferenceDto, SubcontinentCriteria> {
+public interface SubcontinentFacade extends GeoLocationFacade<SubcontinentDto, SubcontinentIndexDto, SubcontinentReferenceDto, SubcontinentCriteria> {
 
 	List<SubcontinentReferenceDto> getByDefaultName(String name, boolean includeArchivedEntities);
 
@@ -21,6 +22,8 @@ public interface SubcontinentFacade
 	SubcontinentReferenceDto getByCountry(CountryReferenceDto countryDto);
 
 	List<SubcontinentReferenceDto> getAllActiveByContinent(String uuid);
+
+	Page<SubcontinentIndexDto> getIndexPage(SubcontinentCriteria criteria, Integer offset, Integer size, List<SortProperty> sortProperties);
 
 	List<SubcontinentReferenceDto> getAllActiveAsReference();
 }

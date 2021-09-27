@@ -17,7 +17,7 @@
  *******************************************************************************/
 package de.symeda.sormas.backend.task;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
 
 import java.util.Date;
 
@@ -25,6 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -103,7 +104,7 @@ public class Task extends AbstractDomainObject {
 		this.taskContext = taskContext;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Case getCaze() {
 		return caze;
 	}
@@ -112,7 +113,7 @@ public class Task extends AbstractDomainObject {
 		this.caze = caze;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Contact getContact() {
 		return contact;
 	}
@@ -121,7 +122,7 @@ public class Task extends AbstractDomainObject {
 		this.contact = contact;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public Event getEvent() {
 		return event;
 	}
@@ -184,7 +185,7 @@ public class Task extends AbstractDomainObject {
 		this.creatorUser = creatorUser;
 	}
 
-	@Column(length = COLUMN_LENGTH_BIG)
+	@Column(length = CHARACTER_LIMIT_BIG)
 	public String getCreatorComment() {
 		return creatorComment;
 	}
@@ -202,7 +203,7 @@ public class Task extends AbstractDomainObject {
 		this.assigneeUser = assigneeUser;
 	}
 
-	@Column(length = COLUMN_LENGTH_BIG)
+	@Column(length = CHARACTER_LIMIT_BIG)
 	public String getAssigneeReply() {
 		return assigneeReply;
 	}
@@ -262,7 +263,7 @@ public class Task extends AbstractDomainObject {
 		this.archived = archived;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne(cascade = {}, fetch = FetchType.LAZY)
 	public TravelEntry getTravelEntry() {
 		return travelEntry;
 	}

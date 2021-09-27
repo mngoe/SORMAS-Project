@@ -15,27 +15,48 @@
 
 package de.symeda.sormas.app.immunization.edit;
 
-import android.view.View;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import android.view.View;
+
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.event.TypeOfPlace;
+import de.symeda.sormas.api.caze.CaseOutcome;
+import de.symeda.sormas.api.i18n.I18nProperties;
+import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
 import de.symeda.sormas.api.immunization.ImmunizationStatus;
 import de.symeda.sormas.api.immunization.MeansOfImmunization;
 import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.infrastructure.facility.FacilityTypeGroup;
+import de.symeda.sormas.api.sample.PathogenTestResultType;
 import de.symeda.sormas.api.utils.fieldaccess.UiFieldAccessCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.FieldVisibilityCheckers;
 import de.symeda.sormas.api.utils.fieldvisibility.checkers.CountryFieldVisibilityChecker;
 import de.symeda.sormas.app.BaseEditFragment;
 import de.symeda.sormas.app.R;
+import de.symeda.sormas.app.backend.caze.Case;
+import de.symeda.sormas.app.backend.caze.CaseCriteria;
+import de.symeda.sormas.app.backend.common.DatabaseHelper;
 import de.symeda.sormas.app.backend.config.ConfigProvider;
 import de.symeda.sormas.app.backend.immunization.Immunization;
+import de.symeda.sormas.app.backend.sample.PathogenTest;
+import de.symeda.sormas.app.backend.sample.Sample;
+import de.symeda.sormas.app.caze.read.CaseReadActivity;
 import de.symeda.sormas.app.component.Item;
+import de.symeda.sormas.app.component.controls.ControlPropertyField;
+import de.symeda.sormas.app.component.controls.ValueChangeListener;
+import de.symeda.sormas.app.component.dialog.ConfirmationDialog;
+import de.symeda.sormas.app.core.notification.NotificationHelper;
+import de.symeda.sormas.app.core.notification.NotificationType;
 import de.symeda.sormas.app.databinding.FragmentImmunizationEditLayoutBinding;
+import de.symeda.sormas.app.immunization.read.ImmunizationSearchCaseDialog;
+import de.symeda.sormas.app.util.Consumer;
 import de.symeda.sormas.app.util.DataUtils;
 import de.symeda.sormas.app.util.DiseaseConfigurationCache;
 import de.symeda.sormas.app.util.InfrastructureDaoHelper;
@@ -54,11 +75,12 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 	private List<Item> initialDistricts;
 	private List<Item> initialCommunities;
 	private List<Item> initialFacilities;
-	private List<Item> facilityOrHomeList;
+	private List<Item> facilityTypeList;
 	private List<Item> facilityTypeGroupList;
 	private List<Item> countries;
+	private Consumer<MeansOfImmunization> meansOfImmunizationChange;
 
-	public static ImmunizationEditFragment newInstance(Immunization activityRootData) {
+	public static ImmunizationEditFragment newInstance(Immunization activityRootData, Consumer<MeansOfImmunization> meansOfImmunizationChange) {
 		ImmunizationEditFragment immunizationEditFragment = newInstanceWithFieldCheckers(
 			ImmunizationEditFragment.class,
 			null,
@@ -66,6 +88,8 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 			FieldVisibilityCheckers.withDisease(activityRootData.getDisease())
 				.add(new CountryFieldVisibilityChecker(ConfigProvider.getServerLocale())),
 			UiFieldAccessCheckers.getDefault(activityRootData.isPseudonymized()));
+
+		immunizationEditFragment.setMeansOfImmunizationChange(meansOfImmunizationChange);
 
 		return immunizationEditFragment;
 	}
@@ -85,8 +109,6 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 		return getResources().getString(R.string.caption_immunization_information);
 	}
 
-
-
 	@Override
 	protected void prepareFragmentData() {
 		record = getActivityRootData();
@@ -98,7 +120,7 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 		}
 		immunizationStatusList = DataUtils.getEnumItems(ImmunizationStatus.class, true);
 		meansOfImmunizationList = DataUtils.getEnumItems(MeansOfImmunization.class, true);
-		immunizationManagementStatusList = DataUtils.getEnumItems(ImmunizationManagementStatus.class, true);
+		immunizationManagementStatusList = DataUtils.getEnumItems(ImmunizationManagementStatus.class, false);
 
 		countries = InfrastructureDaoHelper.loadCountries();
 		initialRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
@@ -107,13 +129,17 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 		initialFacilities =
 			InfrastructureDaoHelper.loadFacilities(record.getResponsibleDistrict(), record.getResponsibleCommunity(), record.getFacilityType());
 
-		facilityOrHomeList = DataUtils.toItems(TypeOfPlace.FOR_CASES, true);
-		facilityTypeGroupList = DataUtils.toItems(FacilityTypeGroup.getAccomodationGroups(), true);
+		facilityTypeGroupList = DataUtils.toItems(Arrays.asList(FacilityTypeGroup.values()), true);
+		facilityTypeList =
+			record.getFacilityType() != null ? DataUtils.toItems(FacilityType.getTypes(record.getFacilityType().getFacilityTypeGroup())) : null;
+
+		DatabaseHelper.getImmunizationDao().initVaccinations(record);
 	}
 
 	@Override
 	protected void onLayoutBinding(FragmentImmunizationEditLayoutBinding contentBinding) {
 		contentBinding.setData(record);
+		setUpControlListeners(contentBinding);
 
 		contentBinding.immunizationCountry.initializeSpinner(countries);
 
@@ -129,31 +155,29 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 			initialCommunities,
 			record.getResponsibleCommunity(),
 			null,
-			facilityOrHomeList,
+			null,
 			contentBinding.facilityTypeGroup,
 			facilityTypeGroupList,
 			contentBinding.immunizationFacilityType,
-			null,
+			facilityTypeList,
 			contentBinding.immunizationHealthFacility,
 			initialFacilities,
 			record.getHealthFacility(),
 			contentBinding.immunizationHealthFacilityDetails,
-			null,
-			null,
-			null,
-			false,
-			() -> false);
+			true);
 	}
 
 	@Override
 	public void onAfterLayoutBinding(final FragmentImmunizationEditLayoutBinding contentBinding) {
 
-		InfrastructureDaoHelper
-				.initializeHealthFacilityDetailsFieldVisibility(contentBinding.immunizationHealthFacility, contentBinding.immunizationHealthFacilityDetails);
+		InfrastructureDaoHelper.initializeHealthFacilityDetailsFieldVisibility(
+			contentBinding.immunizationHealthFacility,
+			contentBinding.immunizationHealthFacilityDetails);
 
 		// Initialize ControlSpinnerFields
 		contentBinding.immunizationDisease.initializeSpinner(diseaseList);
 		contentBinding.immunizationImmunizationStatus.initializeSpinner(immunizationStatusList);
+		contentBinding.immunizationImmunizationStatus.setEnabled(false);
 		contentBinding.immunizationImmunizationManagementStatus.initializeSpinner(immunizationManagementStatusList);
 		contentBinding.immunizationMeansOfImmunization.initializeSpinner(meansOfImmunizationList);
 
@@ -166,23 +190,62 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 		contentBinding.immunizationValidUntil.initializeDateField(getFragmentManager());
 		contentBinding.immunizationLastInfectionDate.initializeDateField(getFragmentManager());
 
-		contentBinding.immunizationMeansOfImmunization.addValueChangedListener(e -> {
-			if (e.getValue() == MeansOfImmunization.OTHER || e.getValue() == MeansOfImmunization.RECOVERY) {
-				contentBinding.immunizationImmunizationManagementStatus.setValue(ImmunizationManagementStatus.COMPLETED);
-				contentBinding.immunizationImmunizationManagementStatus.setEnabled(false);
+		contentBinding.immunizationMeansOfImmunization.addValueChangedListener(new ValueChangeListener() {
+
+			private MeansOfImmunization currentMeansOfImm = record.getMeansOfImmunization();
+
+			@Override
+			public void onChange(ControlPropertyField e) {
+				MeansOfImmunization meansOfImmunization = (MeansOfImmunization) e.getValue();
+
+				if (currentMeansOfImm != meansOfImmunization) {
+					if (meansOfImmunization == MeansOfImmunization.OTHER || meansOfImmunization == MeansOfImmunization.RECOVERY) {
+						contentBinding.immunizationImmunizationManagementStatus.setValue(ImmunizationManagementStatus.COMPLETED);
+						contentBinding.immunizationImmunizationManagementStatus.setEnabled(false);
+
+						removeVaccinationsConfirmation();
+					}
+					if (meansOfImmunization == MeansOfImmunization.VACCINATION || meansOfImmunization == MeansOfImmunization.VACCINATION_RECOVERY) {
+						contentBinding.immunizationVaccinationLayout.setVisibility(View.VISIBLE);
+						contentBinding.immunizationNumberOfDoses.setEnabled(true);
+					} else {
+						contentBinding.immunizationVaccinationLayout.setVisibility(View.GONE);
+					}
+					if (meansOfImmunization == MeansOfImmunization.RECOVERY || meansOfImmunization == MeansOfImmunization.VACCINATION_RECOVERY) {
+						contentBinding.immunizationRecoveryLayout.setVisibility(View.VISIBLE);
+						contentBinding.immunizationRecoveryDate.setEnabled(true);
+						contentBinding.immunizationPositiveTestResultDate.setEnabled(true);
+
+						if (record.getRelatedCase() != null) {
+							contentBinding.openLinkedCase.setVisibility(View.VISIBLE);
+						} else {
+							contentBinding.linkCase.setVisibility(View.VISIBLE);
+						}
+
+					} else {
+						contentBinding.immunizationRecoveryLayout.setVisibility(View.GONE);
+					}
+				}
+				meansOfImmunizationChange.accept(meansOfImmunization);
 			}
-			if (e.getValue() == MeansOfImmunization.VACCINATION || e.getValue() == MeansOfImmunization.VACCINATION_RECOVERY) {
-				contentBinding.immunizationVaccinationLayout.setVisibility(View.VISIBLE);
-				contentBinding.immunizationNumberOfDoses.setEnabled(true);
-			} else {
-				contentBinding.immunizationVaccinationLayout.setVisibility(View.GONE);
-			}
-			if (e.getValue() == MeansOfImmunization.RECOVERY || e.getValue() == MeansOfImmunization.VACCINATION_RECOVERY) {
-				contentBinding.immunizationRecoveryLayout.setVisibility(View.VISIBLE);
-				contentBinding.immunizationRecoveryDate.setEnabled(true);
-				contentBinding.immunizationPositiveTestResultDate.setEnabled(true);
-			} else {
-				contentBinding.immunizationRecoveryLayout.setVisibility(View.GONE);
+
+			private void removeVaccinationsConfirmation() {
+				if (CollectionUtils.isNotEmpty(record.getVaccinations())) {
+					ConfirmationDialog dialog = new ConfirmationDialog(
+						getActivity(),
+						I18nProperties.getString(Strings.headingDeleteVaccinations),
+						I18nProperties.getString(Strings.messageDeleteImmunizationVaccinations),
+						R.string.action_confirm,
+						R.string.action_cancel);
+					dialog.setPositiveCallback(() -> {
+						record.setVaccinations(new ArrayList<>());
+					});
+					dialog.setNegativeCallback(() -> {
+						contentBinding.immunizationMeansOfImmunization.setValue(currentMeansOfImm);
+						dialog.dismiss();
+					});
+					dialog.show();
+				}
 			}
 		});
 
@@ -215,6 +278,19 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 				contentBinding.facilityTypeGroup.setValue(facilityType.getFacilityTypeGroup());
 			}
 		}
+
+		if (record.getMeansOfImmunization() == MeansOfImmunization.RECOVERY
+			|| record.getMeansOfImmunization() == MeansOfImmunization.VACCINATION_RECOVERY) {
+			if (record.getRelatedCase() != null) {
+				contentBinding.linkCase.setVisibility(View.GONE);
+			} else {
+				contentBinding.openLinkedCase.setVisibility(View.GONE);
+			}
+		} else {
+			contentBinding.immunizationRecoveryLayout.setVisibility(View.GONE);
+			contentBinding.linkCase.setVisibility(View.GONE);
+			contentBinding.openLinkedCase.setVisibility(View.GONE);
+		}
 	}
 
 	@Override
@@ -225,5 +301,77 @@ public class ImmunizationEditFragment extends BaseEditFragment<FragmentImmunizat
 	@Override
 	public boolean isShowNewAction() {
 		return false;
+	}
+
+	public void setMeansOfImmunizationChange(Consumer<MeansOfImmunization> meansOfImmunizationChange) {
+		this.meansOfImmunizationChange = meansOfImmunizationChange;
+	}
+
+	private void setUpControlListeners(FragmentImmunizationEditLayoutBinding contentBinding) {
+
+		contentBinding.linkCase.setOnClickListener((v) -> {
+			linkRecoveryImmunizationToCaseSearchCaseIncluded(record);
+		});
+
+		contentBinding.openLinkedCase.setOnClickListener(v -> CaseReadActivity.startActivity(getActivity(), record.getRelatedCase().getUuid(), true));
+	}
+
+	private void linkRecoveryImmunizationToCaseSearchCaseIncluded(Immunization immunization) {
+
+		ImmunizationSearchCaseDialog.searchCaseToLinkImmunization(ImmunizationEditActivity.getActiveActivity(), caseSearchField -> {
+			CaseCriteria criteria = new CaseCriteria();
+			criteria.setPerson(immunization.getPerson());
+			criteria.setDisease(immunization.getDisease());
+			criteria.setOutcome(CaseOutcome.RECOVERED);
+
+			criteria.setTextFilter(caseSearchField);
+
+			List<Case> cases = DatabaseHelper.getCaseDao().queryByCriteria(criteria, 0, 1);
+
+			if (cases != null && !cases.isEmpty() && cases.get(0) != null) {
+				Case foundCase = cases.get(0);
+				immunization.setRelatedCase(foundCase);
+				List<Sample> samples = DatabaseHelper.getSampleDao().queryByCase(foundCase);
+				PathogenTest relevantPathogenTest = null;
+				for (Sample sample : samples) {
+					List<PathogenTest> pathogenTests = DatabaseHelper.getSampleTestDao().queryBySample(sample);
+
+					for (PathogenTest pathogenTest : pathogenTests) {
+						if (pathogenTest.getTestedDisease().equals(foundCase.getDisease())
+							&& PathogenTestResultType.POSITIVE.equals(pathogenTest.getTestResult())) {
+							if (relevantPathogenTest == null) {
+								relevantPathogenTest = pathogenTest;
+							} else if (relevantPathogenTest.getTestDateTime().before(pathogenTest.getTestDateTime())) {
+								relevantPathogenTest = pathogenTest;
+							}
+						}
+					}
+				}
+				if (relevantPathogenTest != null) {
+					Date latestPositiveTestResultDate = relevantPathogenTest.getTestDateTime();
+
+					if (latestPositiveTestResultDate != null) {
+						immunization.setPositiveTestResultDate(latestPositiveTestResultDate);
+					}
+
+					Date onsetDate = foundCase.getSymptoms().getOnsetDate();
+					if (onsetDate != null) {
+						immunization.setLastInfectionDate(onsetDate);
+					}
+
+					Date outcomeDate = foundCase.getOutcomeDate();
+					if (outcomeDate != null) {
+						immunization.setRecoveryDate(outcomeDate);
+					}
+				}
+				final ImmunizationEditActivity activity = (ImmunizationEditActivity) ImmunizationEditFragment.this.getActivity();
+				activity.saveData();
+			} else {
+				NotificationHelper.showNotification(
+					ImmunizationEditActivity.getActiveActivity(),
+					NotificationType.WARNING,
+					I18nProperties.getString(Strings.messageNoCaseFoundToLinkImmunization));
+			}
+		});
 	}
 }

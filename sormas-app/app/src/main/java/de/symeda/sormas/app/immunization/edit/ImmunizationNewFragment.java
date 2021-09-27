@@ -18,11 +18,11 @@ package de.symeda.sormas.app.immunization.edit;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import de.symeda.sormas.api.Disease;
-import de.symeda.sormas.api.event.TypeOfPlace;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Validations;
 import de.symeda.sormas.api.immunization.ImmunizationManagementStatus;
@@ -63,11 +63,23 @@ public class ImmunizationNewFragment extends BaseEditFragment<FragmentImmunizati
 	private List<Item> initialResponsibleCommunities;
 
 	private List<Item> initialFacilities;
-	private List<Item> facilityOrHomeList;
+	private List<Item> facilityTypeList;
 	private List<Item> facilityTypeGroupList;
 
 	public static ImmunizationNewFragment newInstance(Immunization activityRootData) {
 		return newInstance(ImmunizationNewFragment.class, ImmunizationNewActivity.buildBundle().get(), activityRootData);
+	}
+
+	public static ImmunizationNewFragment newInstanceFromCase(Immunization activityRootData, String caseUuid) {
+		return newInstance(ImmunizationNewFragment.class, ImmunizationNewActivity.buildBundleWithCase(caseUuid).get(), activityRootData);
+	}
+
+	public static ImmunizationNewFragment newInstanceFromContact(Immunization activityRootData, String contactUuid) {
+		return newInstance(ImmunizationNewFragment.class, ImmunizationNewActivity.buildBundleWithContact(contactUuid).get(), activityRootData);
+	}
+
+	public static ImmunizationNewFragment newInstanceFromEventParticipant(Immunization activityRootData, String eventParticipantUuid) {
+		return newInstance(ImmunizationNewFragment.class, ImmunizationNewActivity.buildBundleWithEvent(eventParticipantUuid).get(), activityRootData);
 	}
 
 	@Override
@@ -97,7 +109,7 @@ public class ImmunizationNewFragment extends BaseEditFragment<FragmentImmunizati
 
 		immunizationStatusList = DataUtils.getEnumItems(ImmunizationStatus.class, true);
 		meansOfImmunizationList = DataUtils.getEnumItems(MeansOfImmunization.class, true);
-		immunizationManagementStatusList = DataUtils.getEnumItems(ImmunizationManagementStatus.class, true);
+		immunizationManagementStatusList = DataUtils.getEnumItems(ImmunizationManagementStatus.class, false);
 
 		initialResponsibleRegions = InfrastructureDaoHelper.loadRegionsByServerCountry();
 		initialResponsibleDistricts = InfrastructureDaoHelper.loadDistricts(record.getResponsibleRegion());
@@ -111,8 +123,9 @@ public class ImmunizationNewFragment extends BaseEditFragment<FragmentImmunizati
 		initialFacilities =
 			InfrastructureDaoHelper.loadFacilities(record.getResponsibleDistrict(), record.getResponsibleCommunity(), record.getFacilityType());
 
-		facilityOrHomeList = DataUtils.toItems(TypeOfPlace.FOR_CASES, true);
-		facilityTypeGroupList = DataUtils.toItems(FacilityTypeGroup.getAccomodationGroups(), true);
+		facilityTypeGroupList = DataUtils.toItems(Arrays.asList(FacilityTypeGroup.values()), true);
+		facilityTypeList =
+			record.getFacilityType() != null ? DataUtils.toItems(FacilityType.getTypes(record.getFacilityType().getFacilityTypeGroup())) : null;
 	}
 
 	@Override
@@ -133,24 +146,21 @@ public class ImmunizationNewFragment extends BaseEditFragment<FragmentImmunizati
 			initialResponsibleCommunities,
 			record.getResponsibleCommunity(),
 			null,
-			facilityOrHomeList,
+			null,
 			contentBinding.facilityTypeGroup,
 			facilityTypeGroupList,
 			contentBinding.immunizationFacilityType,
-			null,
+			facilityTypeList,
 			contentBinding.immunizationHealthFacility,
 			initialFacilities,
 			record.getHealthFacility(),
 			contentBinding.immunizationHealthFacilityDetails,
-			null,
-			null,
-			null,
-			false,
-			() -> false);
+			true);
 
 		// Initialize ControlSpinnerFields
 		contentBinding.immunizationDisease.initializeSpinner(diseaseList);
 		contentBinding.immunizationImmunizationStatus.initializeSpinner(immunizationStatusList);
+		contentBinding.immunizationImmunizationStatus.setEnabled(false);
 		contentBinding.immunizationImmunizationManagementStatus.initializeSpinner(immunizationManagementStatusList);
 		contentBinding.immunizationMeansOfImmunization.initializeSpinner(meansOfImmunizationList);
 
@@ -227,7 +237,7 @@ public class ImmunizationNewFragment extends BaseEditFragment<FragmentImmunizati
 		contentBinding.immunizationNumberOfDoses.setVisibility(View.GONE);
 
 		if (!(record.getHealthFacility() == null
-				|| (record.getHealthFacility() != null && FacilityDto.NONE_FACILITY_UUID.equals(record.getHealthFacility().getUuid())))) {
+			|| (record.getHealthFacility() != null && FacilityDto.NONE_FACILITY_UUID.equals(record.getHealthFacility().getUuid())))) {
 			final FacilityType facilityType = record.getFacilityType();
 			if (facilityType != null) {
 				contentBinding.facilityTypeGroup.setValue(facilityType.getFacilityTypeGroup());
