@@ -18,6 +18,7 @@ package de.symeda.sormas.backend.info;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,8 +61,6 @@ import de.symeda.sormas.api.epidata.EpiDataDto;
 import de.symeda.sormas.api.event.EventDto;
 import de.symeda.sormas.api.event.EventParticipantDto;
 import de.symeda.sormas.api.exposure.ExposureDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
-import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.hospitalization.HospitalizationDto;
 import de.symeda.sormas.api.hospitalization.PreviousHospitalizationDto;
 import de.symeda.sormas.api.i18n.Captions;
@@ -69,16 +68,18 @@ import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.api.i18n.Strings;
 import de.symeda.sormas.api.importexport.ImportExportUtils;
 import de.symeda.sormas.api.info.InfoFacade;
-import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
-import de.symeda.sormas.api.location.LocationDto;
-import de.symeda.sormas.api.person.PersonContactDetailDto;
-import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.infrastructure.community.CommunityDto;
 import de.symeda.sormas.api.infrastructure.continent.ContinentDto;
 import de.symeda.sormas.api.infrastructure.country.CountryDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityDto;
+import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
+import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryDto;
 import de.symeda.sormas.api.infrastructure.region.RegionDto;
 import de.symeda.sormas.api.infrastructure.subcontinent.SubcontinentDto;
+import de.symeda.sormas.api.location.LocationDto;
+import de.symeda.sormas.api.person.PersonContactDetailDto;
+import de.symeda.sormas.api.person.PersonDto;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.SampleDto;
@@ -194,20 +195,25 @@ public class InfoFacadeEjb implements InfoFacade {
 		String safeName = WorkbookUtil.createSafeSheetName(name);
 		XSSFSheet sheet = workbook.createSheet(safeName);
 
+		int columnCount = EntityColumn.values().length;
+		int rowNumber = 0;
+
+		int count = (int) Arrays.stream(entityClass.getDeclaredFields()).filter(field -> !Modifier.isStatic(field.getModifiers())).count();
+		AreaReference reference =
+				workbook.getCreationHelper().createAreaReference(new CellReference(0, 0), new CellReference(count + rowNumber - 1, columnCount - 1));
+
 		// Create
-		XSSFTable table = sheet.createTable();
+		XSSFTable table = sheet.createTable(reference);
 		String safeTableName = getSafeTableName(safeName);
 		table.setName(safeTableName);
 		table.setDisplayName(safeTableName);
 
 		XssfHelper.styleTable(table, 1);
 
-		int columnCount = EntityColumn.values().length;
-		int rowNumber = 0;
 		// header
 		XSSFRow headerRow = sheet.createRow(rowNumber++);
 		for (EntityColumn column : EntityColumn.values()) {
-			table.addColumn();
+			table.createColumn(column.toString(), column.ordinal());
 			headerRow.createCell(column.ordinal()).setCellValue(column.toString());
 		}
 
@@ -345,8 +351,6 @@ public class InfoFacadeEjb implements InfoFacade {
 			}
 		}
 
-		AreaReference reference =
-			workbook.getCreationHelper().createAreaReference(new CellReference(0, 0), new CellReference(rowNumber - 1, columnCount - 1));
 		table.setCellReferences(reference);
 		table.getCTTable().addNewAutoFilter();
 
@@ -364,15 +368,21 @@ public class InfoFacadeEjb implements InfoFacade {
 
 	private int createFacilityTable(XSSFSheet sheet, int startRow, CellStyle defaultCellStyle) {
 
+		List<String> constantFacilities = Arrays.asList(FacilityDto.OTHER_FACILITY, FacilityDto.NO_FACILITY, FacilityDto.CONFIGURED_FACILITY);
+		int columnCount = EnumColumn.values().length - 1;
+		int rowNumber = startRow;
+
+		AreaReference reference = new AreaReference(
+			new CellReference(startRow, 0),
+			new CellReference(constantFacilities.size() + rowNumber - 1, columnCount - 1),
+			SpreadsheetVersion.EXCEL2007);
+
 		// Create
-		XSSFTable table = sheet.createTable();
+		XSSFTable table = sheet.createTable(reference);
 		String safeTableName = getSafeTableName(sheet.getSheetName() + getSimpleDtoName(FacilityReferenceDto.class));
 		table.setName(safeTableName);
 		table.setDisplayName(safeTableName);
 		XssfHelper.styleTable(table, 2);
-
-		int columnCount = EnumColumn.values().length - 1;
-		int rowNumber = startRow;
 
 		// header
 		XSSFRow headerRow = sheet.createRow(rowNumber++);
@@ -380,13 +390,12 @@ public class InfoFacadeEjb implements InfoFacade {
 			if (EnumColumn.SHORT.equals(column)) {
 				continue;
 			}
-			table.addColumn();
 			String columnCaption = column.toString();
+			table.createColumn(columnCaption);
 			columnCaption = columnCaption.charAt(0) + columnCaption.substring(1).toLowerCase();
 			headerRow.createCell(column.ordinal()).setCellValue(columnCaption);
 		}
 
-		List<String> constantFacilities = Arrays.asList(FacilityDto.OTHER_FACILITY, FacilityDto.NO_FACILITY, FacilityDto.CONFIGURED_FACILITY);
 		for (String constantFacility : constantFacilities) {
 			XSSFRow row = sheet.createRow(rowNumber++);
 			XSSFCell cell;
@@ -409,8 +418,6 @@ public class InfoFacadeEjb implements InfoFacade {
 			cell.setCellValue(DataHelper.equal(caption, desc) ? "" : desc);
 		}
 
-		AreaReference reference =
-			new AreaReference(new CellReference(startRow, 0), new CellReference(rowNumber - 1, columnCount - 1), SpreadsheetVersion.EXCEL2007);
 		table.setCellReferences(reference);
 		table.getCTTable().addNewAutoFilter();
 
@@ -432,26 +439,33 @@ public class InfoFacadeEjb implements InfoFacade {
 
 	private int createEnumTable(XSSFSheet sheet, int startRow, Class<Enum<?>> enumType) {
 
+
+		Object[] enumValues = enumType.getEnumConstants();
+		int columnCount = EnumColumn.values().length;
+		int rowNumber = startRow;
+		AreaReference reference = new AreaReference(
+			new CellReference(startRow, 0),
+			new CellReference(enumValues.length + rowNumber - 1, columnCount - 1),
+			SpreadsheetVersion.EXCEL2007);
+
 		// Create
-		XSSFTable table = sheet.createTable();
+		XSSFTable table = sheet.createTable(reference);
 		String safeTableName = getSafeTableName(sheet.getSheetName() + enumType.getSimpleName());
 		table.setName(safeTableName);
 		table.setDisplayName(safeTableName);
 		XssfHelper.styleTable(table, 2);
 
-		int columnCount = EnumColumn.values().length;
-		int rowNumber = startRow;
+	
 
 		// header
 		XSSFRow headerRow = sheet.createRow(rowNumber++);
 		for (EnumColumn column : EnumColumn.values()) {
-			table.addColumn();
 			String columnCaption = column.toString();
+			table.createColumn(columnCaption, column.ordinal());
 			columnCaption = columnCaption.charAt(0) + columnCaption.substring(1).toLowerCase();
 			headerRow.createCell(column.ordinal()).setCellValue(columnCaption);
 		}
 
-		Object[] enumValues = enumType.getEnumConstants();
 		for (Object enumValueObject : enumValues) {
 			XSSFRow row = sheet.createRow(rowNumber++);
 			XSSFCell cell;
@@ -478,8 +492,6 @@ public class InfoFacadeEjb implements InfoFacade {
 			cell.setCellValue(DataHelper.equal(caption, shortCaption) ? "" : shortCaption);
 		}
 
-		AreaReference reference =
-			new AreaReference(new CellReference(startRow, 0), new CellReference(rowNumber - 1, columnCount - 1), SpreadsheetVersion.EXCEL2007);
 		table.setCellReferences(reference);
 		table.getCTTable().addNewAutoFilter();
 
