@@ -8274,6 +8274,26 @@ UPDATE featureconfiguration SET enabled = true, changedate = now() WHERE feature
 
 INSERT INTO schema_version (version_number, comment) VALUES (406, 'Vaccination refactoring #5909');
 
+-- 2021-09-16 - Make Person.sex required #6673
+UPDATE person SET sex = 'UNKNOWN' WHERE sex IS NULL;
+ALTER TABLE person ALTER COLUMN sex DROP DEFAULT;
+ALTER TABLE person ALTER COLUMN sex SET NOT NULL;
+
+INSERT INTO schema_version (version_number, comment) VALUES (407, 'Make Person.sex required #6673');
+
+-- 2021-09-27 Add disease variant details #5935
+ALTER TABLE cases ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE cases_history ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE events ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE events_history ADD COLUMN diseasevariantdetails varchar(512);
+ALTER TABLE pathogentest ADD COLUMN testeddiseasevariantdetails varchar(512);
+ALTER TABLE pathogentest_history ADD COLUMN testeddiseasevariantdetails varchar(512);
+ALTER TABLE travelentry ADD COLUMN diseasevariantdetails text;
+ALTER TABLE travelentry_history ADD COLUMN diseasevariantdetails text;
+
+INSERT INTO schema_version (version_number, comment) VALUES (408, 'Add disease variant details #5935');
+
+
 -- 2021-09-28 - [S2S] re-share data with the same organization #6639
 CREATE TABLE sharerequestinfo(
     id bigint not null,
@@ -8370,5 +8390,5 @@ $$ LANGUAGE plpgsql;
 DROP TABLE sormastosormasshareinfo_entities;
 DELETE FROM sormastosormasshareinfo WHERE caze_id IS NULL and contact_id IS NULL and event_id IS NULL and eventparticipant_id IS NULL and sample_id is null;
 
-INSERT INTO schema_version (version_number, comment) VALUES (407, '[S2S] re-share data with the same organization #6639');
+INSERT INTO schema_version (version_number, comment) VALUES (409, '[S2S] re-share data with the same organization #6639');
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

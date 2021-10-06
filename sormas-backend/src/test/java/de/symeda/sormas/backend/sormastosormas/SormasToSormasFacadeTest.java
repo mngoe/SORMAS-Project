@@ -33,8 +33,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
-import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
-import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
@@ -43,6 +41,7 @@ import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryType;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.person.PersonDto;
+import de.symeda.sormas.api.person.Sex;
 import de.symeda.sormas.api.sample.AdditionalTestDto;
 import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestType;
@@ -115,6 +114,7 @@ public abstract class SormasToSormasFacadeTest extends AbstractBeanTest {
 		PersonDto person = PersonDto.build();
 		person.setFirstName("John");
 		person.setLastName("Smith");
+		person.setSex(Sex.MALE);
 
 		person.getAddress().setDistrict(rdcf.remoteRdcf.district);
 		person.getAddress().setRegion(rdcf.remoteRdcf.region);

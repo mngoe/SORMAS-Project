@@ -15,6 +15,9 @@
 
 package de.symeda.sormas.backend.sormastosormas.share.shareinfo;
 
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_BIG;
+import static de.symeda.sormas.api.utils.FieldConstraints.CHARACTER_LIMIT_DEFAULT;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +115,7 @@ public class SormasToSormasShareInfo extends AbstractDomainObject {
 		this.eventParticipant = eventParticipant;
 	}
 
-	@Column(columnDefinition = "text")
+	@Column(length = CHARACTER_LIMIT_DEFAULT, nullable = false)
 	public String getOrganizationId() {
 		return organizationId;
 	}

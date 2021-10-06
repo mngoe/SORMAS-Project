@@ -177,6 +177,7 @@ public interface Validations {
 	String sormasToSormasSubcontinent = "sormasToSormasSubcontinent";
 	String specifyFirstName = "specifyFirstName";
 	String specifyLastName = "specifyLastName";
+	String specifySex = "specifySex";
 	String statisticsIncidenceOnlyNumbersAllowed = "statisticsIncidenceOnlyNumbersAllowed";
 	String taskMissingCaseLink = "taskMissingCaseLink";
 	String taskMissingContactLink = "taskMissingContactLink";
