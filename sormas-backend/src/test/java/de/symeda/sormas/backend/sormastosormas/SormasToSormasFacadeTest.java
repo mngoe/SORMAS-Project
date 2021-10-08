@@ -33,6 +33,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactReferenceDto;
+import de.symeda.sormas.api.feature.FeatureConfigurationIndexDto;
+import de.symeda.sormas.api.feature.FeatureType;
 import de.symeda.sormas.api.infrastructure.community.CommunityReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
@@ -153,10 +155,7 @@ public abstract class SormasToSormasFacadeTest extends AbstractBeanTest {
 		return new SormasToSormasSampleDto(sample, Collections.singletonList(pathogenTest), Collections.singletonList(additionalTest));
 	}
 
-	protected SormasToSormasShareInfo createShareInfo(
-		String serverId,
-		boolean ownershipHandedOver,
-		Consumer<SormasToSormasShareInfo> setTarget) {
+	protected SormasToSormasShareInfo createShareInfo(String serverId, boolean ownershipHandedOver, Consumer<SormasToSormasShareInfo> setTarget) {
 
 		SormasToSormasShareInfo shareInfo = new SormasToSormasShareInfo();
 

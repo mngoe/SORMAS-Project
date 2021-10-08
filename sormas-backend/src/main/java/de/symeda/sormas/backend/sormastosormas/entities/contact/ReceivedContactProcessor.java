@@ -33,9 +33,9 @@ import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
 import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.contact.Contact;
 import de.symeda.sormas.backend.contact.ContactService;
+import de.symeda.sormas.backend.sormastosormas.data.Sormas2SormasDataValidator;
 import de.symeda.sormas.backend.sormastosormas.data.infra.InfrastructureValidator;
 import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessor;
-import de.symeda.sormas.backend.sormastosormas.data.Sormas2SormasDataValidator;
 
 @Stateless
 @LocalBean
@@ -53,33 +53,13 @@ public class ReceivedContactProcessor implements ReceivedDataProcessor<ContactDt
 
 		ContactDto contact = receivedContact.getEntity();
 		PersonDto person = receivedContact.getPerson();
-		ContactDto contact = receivedContact.getEntity();
-		List<SormasToSormasSampleDto> samples = receivedContact.getSamples();
-		SormasToSormasOriginInfoDto originInfo = receivedContact.getOriginInfo();
-
-		ValidationErrors contactValidationErrors = new ValidationErrors();
-
-		ValidationErrors originInfoErrors = dataValidator.validateOriginInfo(originInfo, Captions.Contact);
-		contactValidationErrors.addAll(originInfoErrors);
-
-		ValidationErrors contactDataErrors = dataValidator.validateContactData(contact, person, existingContact);
-		contactValidationErrors.addAll(contactDataErrors);
 
 		ValidationErrors uuidError = validateSharedUuid(contact.getUuid());
 		if (uuidError.hasError()) {
 			return uuidError;
 		}
 
-		if (samples != null && samples.size() > 0) {
-			List<ValidationErrors> sampleErrors = dataValidator.validateSamples(samples);
-			validationErrors.addAll(sampleErrors);
-		}
-
-		if (validationErrors.size() > 0) {
-			throw new SormasToSormasValidationException(validationErrors);
-		}
-
-		return new ProcessedContactData(person, contact, samples, originInfo);
+		return dataValidator.validateContactData(contact, person, existingContact);
 	}
 
 	@Override
@@ -90,25 +70,6 @@ public class ReceivedContactProcessor implements ReceivedDataProcessor<ContactDt
 		}
 
 		return processContactPreview(preview);
-	}
-
-	private ValidationErrors processContactData(ContactDto contact, PersonDto person, Contact existingContact) {
-		ValidationErrors validationErrors = new ValidationErrors();
-
-		ValidationErrors personValidationErrors = dataProcessorHelper.processPerson(person);
-		validationErrors.addAll(personValidationErrors);
-
-		contact.setPerson(person.toReference());
-		dataProcessorHelper.updateReportingUser(contact, existingContact);
-
-		DataHelper.Pair<InfrastructureValidator.InfrastructureData, List<ValidationErrorMessage>> infrastructureAndErrors =
-			infraValidator.validateInfrastructure(contact.getRegion(), contact.getDistrict(), contact.getCommunity());
-
-		ValidationErrors contactErrors = dataValidator.validateContactPreview(preview);
-
-		dataProcessorHelper.processEpiData(contact.getEpiData(), validationErrors);
-
-		return validationErrors;
 	}
 
 	private ValidationErrors validateSharedUuid(String uuid) {

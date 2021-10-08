@@ -131,8 +131,6 @@ public abstract class AbstractSormasToSormasInterface<ADO extends AbstractDomain
 	@EJB
 	private ShareDataBuilderHelper dataBuilderHelper;
 	@EJB
-	private Sormas2SormasDataValidator dataProcessorHelper;
-	@EJB
 	private FeatureConfigurationFacadeEjbLocal featureConfigurationFacade;
 	@EJB
 	private SormasToSormasEncryptionFacadeEjbLocal sormasToSormasEncryptionEjb;

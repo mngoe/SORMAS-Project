@@ -15,33 +15,29 @@
 
 package de.symeda.sormas.backend.sormastosormas.entities.sample;
 
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.Validations;
-import de.symeda.sormas.api.infrastructure.facility.FacilityType;
 import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.sormastosormas.SormasToSormasSampleDto;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorGroup;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorMessage;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sample.SampleService;
+import de.symeda.sormas.backend.sormastosormas.data.Sormas2SormasDataValidator;
 import de.symeda.sormas.backend.sormastosormas.data.infra.InfrastructureValidator;
 import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessor;
-import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessorHelper;
 
 @Stateless
 @LocalBean
 public class ReceivedSampleProcessor implements ReceivedDataProcessor<SampleDto, SormasToSormasSampleDto, Void, Sample> {
 
 	@EJB
-	private ReceivedDataProcessorHelper dataProcessorHelper;
+	private Sormas2SormasDataValidator dataValidator;
 	@EJB
 	private InfrastructureValidator infraValidator;
 	@EJB
@@ -56,37 +52,10 @@ public class ReceivedSampleProcessor implements ReceivedDataProcessor<SampleDto,
 			return uuidError;
 		}
 
-		ValidationErrors validationErrors = new ValidationErrors();
-
-		dataProcessorHelper.updateReportingUser(sample, existingData);
-
-		DataHelper.Pair<InfrastructureValidator.InfrastructureData, List<ValidationErrorMessage>> infrastructureAndErrors =
-			infraValidator.validateInfrastructure(null, null, null, null, null, null, null, sample.getLab(), sample.getLabDetails(), null, null);
-
-		infraValidator.handleInfraStructure(infrastructureAndErrors, Captions.Sample_lab, validationErrors, (infrastructureData -> {
-			sample.setLab(infrastructureData.getFacility());
-			sample.setLabDetails(infrastructureData.getFacilityDetails());
-		}));
+		ValidationErrors validationErrors = dataValidator.validateSample(existingData, sample);
 
 		sharedData.getPathogenTests().forEach(pathogenTest -> {
-			DataHelper.Pair<InfrastructureValidator.InfrastructureData, List<ValidationErrorMessage>> ptInfrastructureAndErrors =
-				infraValidator.validateInfrastructure(
-					null,
-					null,
-					null,
-					null,
-					null,
-					null,
-					FacilityType.LABORATORY,
-					pathogenTest.getLab(),
-					pathogenTest.getLabDetails(),
-					null,
-					null);
-
-			infraValidator.handleInfraStructure(ptInfrastructureAndErrors, Captions.PathogenTest_lab, validationErrors, (infrastructureData -> {
-				pathogenTest.setLab(infrastructureData.getFacility());
-				pathogenTest.setLabDetails(infrastructureData.getFacilityDetails());
-			}));
+			dataValidator.validatePathogenTest(validationErrors, pathogenTest);
 		});
 
 		return validationErrors;

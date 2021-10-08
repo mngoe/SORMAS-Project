@@ -20,6 +20,7 @@ import java.io.Serializable;
 import javax.validation.Valid;
 
 import de.symeda.sormas.api.HasUuid;
+import de.symeda.sormas.api.event.EventReferenceDto;
 import de.symeda.sormas.api.utils.EmbeddedPersonalData;
 import de.symeda.sormas.api.utils.EmbeddedSensitiveData;
 import de.symeda.sormas.api.utils.pseudonymization.PseudonymizableDto;

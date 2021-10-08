@@ -15,8 +15,6 @@
 
 package de.symeda.sormas.backend.sormastosormas.entities.eventparticipant;
 
-import java.util.List;
-
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -29,12 +27,11 @@ import de.symeda.sormas.api.sormastosormas.sharerequest.SormasToSormasEventParti
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorGroup;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorMessage;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
-import de.symeda.sormas.api.utils.DataHelper;
 import de.symeda.sormas.backend.event.EventParticipant;
 import de.symeda.sormas.backend.event.EventParticipantService;
+import de.symeda.sormas.backend.sormastosormas.data.Sormas2SormasDataValidator;
 import de.symeda.sormas.backend.sormastosormas.data.infra.InfrastructureValidator;
 import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessor;
-import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessorHelper;
 
 @Stateless
 @LocalBean
@@ -43,7 +40,7 @@ public class ReceivedEventParticipantProcessor
 	ReceivedDataProcessor<EventParticipantDto, SormasToSormasEventParticipantDto, SormasToSormasEventParticipantPreview, EventParticipant> {
 
 	@EJB
-	private ReceivedDataProcessorHelper dataProcessorHelper;
+	private Sormas2SormasDataValidator dataValidator;
 	@EJB
 	private InfrastructureValidator infraValidator;
 	@EJB
@@ -58,19 +55,7 @@ public class ReceivedEventParticipantProcessor
 			return uuidError;
 		}
 
-		ValidationErrors validationErrors = new ValidationErrors();
-
-		ValidationErrors personValidationErrors = dataProcessorHelper.processPerson(eventParticipant.getPerson());
-		validationErrors.addAll(personValidationErrors);
-
-		DataHelper.Pair<InfrastructureValidator.InfrastructureData, List<ValidationErrorMessage>> infrastructureAndErrors =
-			infraValidator.validateInfrastructure(eventParticipant.getRegion(), eventParticipant.getDistrict(), null);
-		infraValidator.handleInfraStructure(infrastructureAndErrors, Captions.EventParticipant, validationErrors, (infrastructureData -> {
-			eventParticipant.setRegion(infrastructureData.getRegion());
-			eventParticipant.setDistrict(infrastructureData.getDistrict());
-		}));
-
-		return validationErrors;
+		return dataValidator.validateEventParticipant(eventParticipant);
 	}
 
 	@Override
@@ -80,7 +65,7 @@ public class ReceivedEventParticipantProcessor
 			return uuidError;
 		}
 
-		return dataProcessorHelper.processPersonPreview(eventParticipant.getPerson());
+		return dataValidator.validatePersonPreview(eventParticipant.getPerson());
 	}
 
 	private ValidationErrors validateSharedUuid(String uuid) {

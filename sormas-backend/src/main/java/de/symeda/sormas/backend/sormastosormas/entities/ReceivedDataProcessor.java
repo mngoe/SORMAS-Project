@@ -35,7 +35,7 @@ import de.symeda.sormas.api.sormastosormas.event.SormasToSormasEventParticipantD
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrorGroup;
 import de.symeda.sormas.api.sormastosormas.validation.ValidationErrors;
 import de.symeda.sormas.backend.sormastosormas.ValidationHelper;
-import de.symeda.sormas.backend.sormastosormas.data.received.ReceivedDataProcessorHelper;
+import de.symeda.sormas.backend.sormastosormas.data.Sormas2SormasDataValidator;
 import de.symeda.sormas.backend.sormastosormas.entities.caze.ReceivedCaseProcessor;
 import de.symeda.sormas.backend.sormastosormas.entities.contact.ReceivedContactProcessor;
 import de.symeda.sormas.backend.sormastosormas.entities.event.ReceivedEventProcessor;
@@ -48,7 +48,7 @@ import de.symeda.sormas.backend.sormastosormas.share.ShareRequestData;
 public class ReceivedDataProcessor {
 
 	@EJB
-	private ReceivedDataProcessorHelper dataProcessorHelper;
+	private Sormas2SormasDataValidator dataValidator;
 	@EJB
 	private ReceivedCaseProcessor caseProcessor;
 	@EJB
@@ -64,7 +64,7 @@ public class ReceivedDataProcessor {
 		List<ValidationErrors> validationErrors = new ArrayList<>();
 
 		SormasToSormasOriginInfoDto originInfo = receivedData.getOriginInfo();
-		ValidationErrors originInfoErrors = dataProcessorHelper.processOriginInfo(originInfo, Captions.sormasToSormasOriginInfo);
+		ValidationErrors originInfoErrors = dataValidator.validateOriginInfo(originInfo, Captions.sormasToSormasOriginInfo);
 		if (originInfoErrors.hasError()) {
 			validationErrors.add(originInfoErrors);
 		}
@@ -133,7 +133,7 @@ public class ReceivedDataProcessor {
 		List<ValidationErrors> validationErrors = new ArrayList<>();
 
 		SormasToSormasOriginInfoDto originInfo = shareData.getOriginInfo();
-		ValidationErrors originInfoErrors = dataProcessorHelper.processOriginInfo(originInfo, Captions.sormasToSormasOriginInfo);
+		ValidationErrors originInfoErrors = dataValidator.validateOriginInfo(originInfo, Captions.sormasToSormasOriginInfo);
 		if (originInfoErrors.hasError()) {
 			validationErrors.add(new ValidationErrors(new ValidationErrorGroup(Captions.sormasToSormasOriginInfo), originInfoErrors));
 		}

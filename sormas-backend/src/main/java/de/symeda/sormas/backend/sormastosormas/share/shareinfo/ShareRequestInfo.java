@@ -15,8 +15,6 @@
 
 package de.symeda.sormas.backend.sormastosormas.share.shareinfo;
 
-import static de.symeda.sormas.api.EntityDto.COLUMN_LENGTH_BIG;
-
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -30,6 +28,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
 import de.symeda.sormas.api.sormastosormas.sharerequest.ShareRequestStatus;
+import de.symeda.sormas.api.utils.FieldConstraints;
 import de.symeda.sormas.backend.common.AbstractDomainObject;
 import de.symeda.sormas.backend.user.User;
 
@@ -138,7 +137,7 @@ public class ShareRequestInfo extends AbstractDomainObject {
 		this.pseudonymizedSensitiveData = pseudonymizedSensitiveData;
 	}
 
-	@Column(length = COLUMN_LENGTH_BIG)
+	@Column(length = FieldConstraints.CHARACTER_LIMIT_BIG)
 	public String getComment() {
 		return comment;
 	}
