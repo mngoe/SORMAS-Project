@@ -30,7 +30,7 @@ import com.vaadin.ui.UI;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseFacade;
-import de.symeda.sormas.api.caze.CaseIndexDto;
+import de.symeda.sormas.api.caze.CaseSelectionDto;
 import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.caze.caseimport.CaseImportEntities;
 import de.symeda.sormas.api.caze.caseimport.CaseImportFacade;
@@ -166,7 +166,7 @@ public class CaseImporter extends DataImporter {
 					CaseSimilarityCriteria criteria =
 						CaseSimilarityCriteria.forCase(importCase, selectedPersonUuid != null ? selectedPersonUuid : importPerson.getUuid());
 
-					List<CaseIndexDto> similarCases = caseFacade.getSimilarCases(criteria);
+					List<CaseSelectionDto> similarCases = caseFacade.getSimilarCases(criteria);
 
 					if (similarCases.size() > 0) {
 						// Call the logic that allows the user to handle the similarity; once this has been done, the LOCK should be notified
@@ -245,7 +245,7 @@ public class CaseImporter extends DataImporter {
 
 				@Override
 				public void onCommit() {
-					CaseIndexDto pickedCase = pickOrImportField.getValue();
+					CaseSelectionDto pickedCase = pickOrImportField.getValue();
 					if (pickedCase != null) {
 						if (pickOrImportField.isOverrideCase()) {
 							resultConsumer.accept(new CaseImportSimilarityResult(null, pickedCase, ImportSimilarityResultOption.OVERRIDE));

@@ -55,7 +55,7 @@ import de.symeda.sormas.api.CountryHelper;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.caze.CaseDataDto;
-import de.symeda.sormas.api.caze.CaseIndexDto;
+import de.symeda.sormas.api.caze.CaseReferenceDto;
 import de.symeda.sormas.api.contact.ContactCategory;
 import de.symeda.sormas.api.contact.ContactClassification;
 import de.symeda.sormas.api.contact.ContactDto;
@@ -786,9 +786,9 @@ public class ContactDataForm extends AbstractEditForm<ContactDto> {
 		}
 	}
 
-	public void setSourceCase(CaseIndexDto caze) {
+	public void setSourceCase(CaseReferenceDto caze) {
 		if (caze != null) {
-			getValue().setCaze(caze.toReference());
+			getValue().setCaze(caze);
 			updateFieldVisibilitiesByCase(true);
 		} else {
 			getValue().setCaze(null);

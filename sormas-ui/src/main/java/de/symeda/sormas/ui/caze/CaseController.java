@@ -59,6 +59,7 @@ import de.symeda.sormas.api.caze.CaseFacade;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.CaseLogic;
 import de.symeda.sormas.api.caze.CaseOrigin;
+import de.symeda.sormas.api.caze.CaseSelectionDto;
 import de.symeda.sormas.api.caze.CaseSimilarityCriteria;
 import de.symeda.sormas.api.caze.classification.ClassificationHtmlRenderer;
 import de.symeda.sormas.api.caze.classification.DiseaseClassificationCriteriaDto;
@@ -764,7 +765,7 @@ public class CaseController {
 
 		// Check for similar cases for the **given person**.
 		// This is a case similarity check for a fixed person and will not return cases where persons are similar.
-		List<CaseIndexDto> similarCases = FacadeProvider.getCaseFacade().getSimilarCases(criteria);
+		List<CaseSelectionDto> similarCases = FacadeProvider.getCaseFacade().getSimilarCases(criteria);
 
 		if (similarCases.size() > 0) {
 			CasePickOrCreateField pickOrCreateField = new CasePickOrCreateField(caseDto, person, similarCases);
@@ -774,7 +775,7 @@ public class CaseController {
 			component.getCommitButton().setCaption(I18nProperties.getCaption(Captions.actionConfirm));
 			component.getCommitButton().setEnabled(false);
 			component.addCommitListener(() -> {
-				CaseIndexDto pickedCase = pickOrCreateField.getValue();
+				CaseSelectionDto pickedCase = pickOrCreateField.getValue();
 				if (pickedCase != null) {
 					selectedCaseUuidConsumer.accept(pickedCase.getUuid());
 				} else {

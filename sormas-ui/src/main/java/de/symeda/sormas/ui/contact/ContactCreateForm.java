@@ -282,7 +282,7 @@ public class ContactCreateForm extends AbstractEditForm<ContactDto> {
 						removeCaseButton.setVisible(true);
 						chooseCaseButton.setCaption(I18nProperties.getCaption(Captions.contactChangeCase));
 
-						cbDisease.setValue(selectedCase.getDisease());
+						//cbDisease.setValue(selectedCase.getDisease());
 						getValue().setCaze(this.selectedCase);
 						updateFieldVisibilitiesByCase(true);
 					}
