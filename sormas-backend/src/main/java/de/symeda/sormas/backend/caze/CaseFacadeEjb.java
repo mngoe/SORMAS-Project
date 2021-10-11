@@ -202,6 +202,7 @@ import de.symeda.sormas.backend.caze.porthealthinfo.PortHealthInfoFacadeEjb.Port
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReport;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportFacadeEjb;
 import de.symeda.sormas.backend.caze.surveillancereport.SurveillanceReportService;
+import de.symeda.sormas.backend.caze.transformers.CaseSelectionDtoResultTransformer;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourseFacadeEjb;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalCourseFacadeEjb.ClinicalCourseFacadeEjbLocal;
 import de.symeda.sormas.backend.clinicalcourse.ClinicalVisit;
@@ -634,22 +635,12 @@ public class CaseFacadeEjb implements CaseFacade {
 
 	@Override
 	public List<CaseSelectionDto> getCaseSelectionList(CaseCriteria caseCriteria) {
-		return getIndexList(caseCriteria, null, null, null).stream()
-			.map(
-				entry -> new CaseSelectionDto(
-					entry.getUuid(),
-					entry.getEpidNumber(),
-					entry.getExternalID(),
-					entry.getPersonFirstName(),
-					entry.getPersonLastName(),
-					entry.getAgeAndBirthDate(),
-					entry.getResponsibleDistrictName(),
-					entry.getHealthFacilityName(),
-					entry.getReportDate(),
-					entry.getSex(),
-					entry.getCaseClassification(),
-					entry.getOutcome()))
-			.collect(Collectors.toList());
+		List<CaseSelectionDto> entries = caseService.getCaseSelectionList(caseCriteria);
+
+		Pseudonymizer pseudonymizer = Pseudonymizer.getDefault(userService::hasRight, I18nProperties.getCaption(Captions.inaccessibleValue));
+		pseudonymizer.pseudonymizeDtoCollection(CaseSelectionDto.class, entries, CaseSelectionDto::isInJurisdiction, null);
+
+		return entries;
 	}
 
 	@Override
@@ -1351,23 +1342,9 @@ public class CaseFacadeEjb implements CaseFacade {
 		cq.where(filter);
 
 		return em.createQuery(cq)
-			.getResultList()
-			.stream()
-			.map(
-				entry -> new CaseSelectionDto(
-					entry.getUuid(),
-					entry.getEpidNumber(),
-					entry.getExternalID(),
-					entry.getPersonFirstName(),
-					entry.getPersonLastName(),
-					entry.getAgeAndBirthDate(),
-					entry.getResponsibleDistrictName(),
-					entry.getHealthFacilityName(),
-					entry.getReportDate(),
-					entry.getSex(),
-					entry.getCaseClassification(),
-					entry.getOutcome()))
-			.collect(Collectors.toList());
+			.unwrap(org.hibernate.query.Query.class)
+			.setResultTransformer(new CaseSelectionDtoResultTransformer())
+			.getResultList();
 	}
 
 	@Override
