@@ -42,7 +42,6 @@ import com.vaadin.ui.Window;
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.DiseaseHelper;
 import de.symeda.sormas.api.FacadeProvider;
-import de.symeda.sormas.api.caze.CaseCriteria;
 import de.symeda.sormas.api.caze.CaseDataDto;
 import de.symeda.sormas.api.caze.CaseIndexDto;
 import de.symeda.sormas.api.caze.CaseLogic;
@@ -748,8 +747,7 @@ public class ContactController {
 
 	public void openSelectCaseForContactWindow(Disease disease, Consumer<CaseIndexDto> selectedCaseCallback) {
 
-		CaseCriteria criteria = new CaseCriteria().disease(disease);
-		CaseSelectionField selectionField = new CaseSelectionField(criteria);
+		CaseSelectionField selectionField = new CaseSelectionField(disease);
 		selectionField.setWidth(1280, Unit.PIXELS);
 
 		final CommitDiscardWrapperComponent<CaseSelectionField> component = new CommitDiscardWrapperComponent<>(selectionField);
