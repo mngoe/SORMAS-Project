@@ -212,7 +212,7 @@ public class User extends AbstractDomainObject {
 		this.region = region;
 	}
 
-	@ManyToOne(cascade = {})
+	@ManyToOne
 	public Country getCountry() {
 		return country;
 	}
