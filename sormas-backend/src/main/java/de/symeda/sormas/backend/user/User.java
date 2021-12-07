@@ -217,8 +217,8 @@ public class User extends AbstractDomainObject {
 		return country;
 	}
 
-	public void setCountry(Country country) {
-		this.country = country;
+	public void setCountry(Country usercountry) {
+		this.country = usercountry;
 	}
 
 	@ElementCollection(fetch = FetchType.EAGER)
