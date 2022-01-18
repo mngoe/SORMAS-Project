@@ -11,13 +11,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Alignment;
-import com.vaadin.v7.shared.ui.grid.HeightMode;
 
-import de.symeda.sormas.api.disease.DiseaseBurdenDto;
-import de.symeda.sormas.api.sample.PathogenTestDto;
 import de.symeda.sormas.api.sample.PathogenTestType;
-import de.symeda.sormas.api.sample.SampleDto;
 import de.symeda.sormas.api.FacadeProvider;
 import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
@@ -44,7 +39,6 @@ public class PythogentBurdenComponent extends VerticalLayout{
 	List<String> newList = TestTypes.stream()
 			.map(String::valueOf)
 			.collect(Collectors.toList());
-	int count;
 	List<String> TestType = FacadeProvider.getSampleFacade().getTypeTest();
 	List<String> lists=new ArrayList<String>(); 
 		for(String requested : TestType){
