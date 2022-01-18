@@ -114,6 +114,7 @@ import de.symeda.sormas.backend.infrastructure.facility.FacilityService;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.location.Location;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.sample.SampleService;
 import de.symeda.sormas.backend.sample.AdditionalTestFacadeEjb.AdditionalTestFacadeEjbLocal;
 import de.symeda.sormas.backend.sample.PathogenTestFacadeEjb.PathogenTestFacadeEjbLocal;
 import de.symeda.sormas.backend.sormastosormas.origin.SormasToSormasOriginInfoFacadeEjb;
@@ -191,11 +192,15 @@ public class SampleFacadeEjb implements SampleFacade {
 	}
 
 	@Override
+	public List<String> getTypeTest() {
+
+		return sampleService.getTypeTest();
+	}
+	@Override
 	public List<String> getAllUuids() {
 
 		return sampleService.getAllUuids();
 	}
-	
 	@Override
 	public List<SampleDto> getAllActiveSamplesAfter(Date date) {
 
