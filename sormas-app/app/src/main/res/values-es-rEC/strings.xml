@@ -643,4 +643,5 @@
     <string name="caption_facility_type_group">Facility category</string>
     <string name="caption_facility_type">Facility type</string>
     <string name="value_vaccine_date_unknown">Vaccination Date N/A</string>
+    <string name="heading_alerte_precoce">SISTEMA DE ALERTA TEMPRANA PARA LA LUCHA CONTRA LA PANDEMIA DE COVID-19</string>
 </resources>

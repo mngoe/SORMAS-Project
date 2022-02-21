@@ -90,7 +90,17 @@
     <dimen name="logoMarginTop">20dp</dimen>
     <dimen name="logoMarginBottom">10dp</dimen>
 
+    <!-- Logo1 -->
+    <dimen name="logo1Width">150dp</dimen>
+    <dimen name="logo1Height">100dp</dimen>
+    <dimen name="logo1MarginTop">100dp</dimen>
+    <dimen name="logo1MarginBottom">5dp</dimen>
 
+    <!-- Logo2 -->
+    <dimen name="logo2Width">150dp</dimen>
+    <dimen name="logo2Height">100dp</dimen>
+    <dimen name="logo2MarginTop">100dp</dimen>
+    <dimen name="logo2MarginBottom">5dp</dimen>
     <!-- Login Heading 1 -->
     <dimen name="loginHeadingTextSize">16sp</dimen>
     <dimen name="serviceMarginBottom">40dp</dimen>
