@@ -175,6 +175,13 @@
                         android:contentDescription="@string/description_sormas_logo"
                         android:src="@drawable/logo_bottom" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:text="SORMAS - https://sormas.org" />
             </LinearLayout>
 
 
