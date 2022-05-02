@@ -116,8 +116,8 @@ public class PythogentBurdenComponent extends VerticalLayout{
 			if(ptt == newList.get(0)){
 				TextField textField = new TextField(ptt);
 				Label label = new Label(I18nProperties.getCaption(PathogenTestType.ANTIBODY_DETECTION)+" : ");
-				addComponent(title);
-				textField.setValue(text+newOccurence.get(0));
+				addComponent(label);
+				textField.setValue(newOccurence.get(0));
 				textField.setWidth("55%");
 				textField.setReadOnly(true);
 				addComponent(textField);
