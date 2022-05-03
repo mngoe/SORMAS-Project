@@ -18,7 +18,7 @@ import de.symeda.sormas.api.i18n.Captions;
 import de.symeda.sormas.api.i18n.I18nProperties;
 import de.symeda.sormas.ui.utils.CssStyles;
 
-public class PythogentBurdenComponent extends VerticalLayout{
+public class PythogentBurdenComponent extends HorizontalLayout{
     private static final long serialVersionUID = 6582975657305031105L;
 	List<PathogenTestType> TestTypes = new ArrayList<PathogenTestType>();
 	public PythogentBurdenComponent() {
@@ -28,6 +28,7 @@ public class PythogentBurdenComponent extends VerticalLayout{
 		Label titles = new Label(I18nProperties.getCaption(Captions.dashboardNumberOfPerson));
 		CssStyles.style(titles, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 		TextField text = new TextField();
+		CssStyles.style(text, CssStyles.H3, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 		text.setValue(PersonList);
 		text.setReadOnly(true);
 		formDataLayout.addComponent(titles);
@@ -115,7 +116,7 @@ public class PythogentBurdenComponent extends VerticalLayout{
 		for(String ptt : newList){
 			if(ptt == newList.get(0)){
 				TextField textField = new TextField(ptt);
-				Label label = new Label("PathogenTestType.ANTIBODY_DETECTION");
+				Label label = new Label(occurrences_1);
 				addComponent(label);
 				textField.setValue(newOccurence.get(0));
 				textField.setWidth("55%");
