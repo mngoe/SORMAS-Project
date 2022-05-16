@@ -116,7 +116,7 @@ public class PythogentBurdenComponent extends HorizontalLayout{
 		for(String ptt : newList){
 			if(ptt == newList.get(0)){
 				TextField textField = new TextField(ptt);
-				Label label = new Label(occurrences_1);
+				Label label = new Label("ANTIBODY_DETECTION");
 				addComponent(label);
 				textField.setValue(newOccurence.get(0));
 				textField.setWidth("55%");
