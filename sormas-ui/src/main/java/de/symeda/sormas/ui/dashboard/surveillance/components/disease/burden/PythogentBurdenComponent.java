@@ -287,7 +287,6 @@ public class PythogentBurdenComponent extends HorizontalLayout{
 
 		}
 		setMargin(new MarginInfo(true, true, false, true));
-		setSpacing(false);
 	}
 
 }
