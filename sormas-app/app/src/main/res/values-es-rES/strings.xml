@@ -21,7 +21,7 @@
     Here there are only strings, which are only useful for the app.
  -->
 <resources>
-    <string name="app_name">SORMAS - Oceac</string>
+    <string name="app_name">SISEAC</string>
     <string name="and">and</string>
     <string name="no">No</string>
     <string name="notAnswered">Not answered</string>
@@ -32,7 +32,7 @@
     <string name="action_add_missing_case">Add Missing Case</string>
     <string name="action_allow_gps_access">Allow GPS Access</string>
     <string name="action_apply_filters">Apply filters</string>
-    <string name="action_back_to_settings">Back to settings</string>
+    <string name="action_back_to_settings">Volver a la configuración</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_change_PIN">Change PIN</string>
     <string name="action_change_settings"><u>Change Settings</u></string>
@@ -316,7 +316,7 @@
     <string name="heading_create_pin">Create PIN</string>
     <string name="heading_disease_detection">Disease Detection</string>
     <string name="heading_disease_prevention">Disease Prevention</string>
-    <string name="heading_enter_pin">Enter PIN</string>
+    <string name="heading_enter_pin">Introducir PIN</string>
     <string name="heading_environmental_exposure">Environmental Exposure</string>
     <string name="heading_epidemiological_info">Epidemiological Info</string>
     <string name="heading_error_dialog">Error!</string>
@@ -418,8 +418,8 @@
     <string name="hint_create_pin">Please choose a four-digit PIN which you will use to authenticate yourself whenever you open the SORMAS app.</string>
     <string name="hint_create_pin_again">Please enter the PIN again.</string>
     <string name="hint_dashboard_section_not_data">No summary to display for the %1$s section.</string>
-    <string name="hint_enter_authentication_pin">Please enter your authentication PIN.</string>
-    <string name="hint_enter_current_pin">Enter your current PIN.</string>
+    <string name="hint_enter_authentication_pin">Por favor, introduzca su PIN de autenticación.</string>
+    <string name="hint_enter_current_pin">Introduzca su PIN actual.</string>
     <string name="hint_enter_location">Please enter a location</string>
     <string name="hint_first_name">First Name</string>
     <string name="hint_last_name">Last Name</string>

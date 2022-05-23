@@ -21,7 +21,7 @@
     Here there are only strings, which are only useful for the app.
  -->
 <resources>
-    <string name="app_name">SORMAS - Oceac</string>
+    <string name="app_name">SISEAC</string>
     <string name="and">et</string>
     <string name="no">Non</string>
     <string name="notAnswered">Pas de réponse</string>
@@ -359,7 +359,7 @@
     <string name="heading_previous_hospitalizations">Hospitalisations précédentes</string>
     <string name="heading_refer_case_from_poe">Référez le cas à partir du point d\'entrée</string>
     <string name="heading_reset_PIN">Réinitialiser le PIN</string>
-    <string name="heading_response_management">Gestion des réponses &amp; Système d\'analyse</string>
+    <string name="heading_response_management">Epidémiologique d\’Afrique Centrale</string>
     <string name="heading_sample_edit">Modifier l\'échantillon</string>
     <string name="heading_sample_new">Nouvel échantillon</string>
     <string name="heading_sample_read">Lire l\'échantillon</string>
@@ -378,7 +378,7 @@
     <string name="heading_social_events">Événements sociaux</string>
     <string name="heading_source_case">Cas source</string>
     <string name="heading_source_of_information">Source d\'information</string>
-    <string name="heading_surveillance_outbreak">Surveillance épidémiologique</string>
+    <string name="heading_surveillance_outbreak">Système Intégré de Surveillance</string>
     <string name="heading_symptoms">Symptoms</string>
     <string name="heading_sync_conflicts">Conflit de synchronisation</string>
     <string name="heading_synchronization">Synchronisation</string>
@@ -643,4 +643,5 @@
     <string name="caption_facility_type_group">Catégorie d\'établissement</string>
     <string name="caption_facility_type">Type d\'établissement</string>
     <string name="value_vaccine_date_unknown">Vaccination Date N/A</string>
+    <string name="heading_alerte_precoce">SYSTEME D’ALERTE PRECOCE POUR LA LUTTE CONTRE LA PANDEMIE DE LA COVID-19</string>
 </resources>

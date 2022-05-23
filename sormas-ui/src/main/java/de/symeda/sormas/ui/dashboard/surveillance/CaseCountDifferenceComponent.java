@@ -32,6 +32,7 @@ import de.symeda.sormas.ui.dashboard.DashboardDataProvider;
 import de.symeda.sormas.ui.highcharts.HighChart;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.DateFormatHelper;
+import de.symeda.sormas.ui.dashboard.surveillance.components.disease.burden.PythogentBurdenComponent;
 
 public class CaseCountDifferenceComponent extends VerticalLayout {
 
@@ -40,6 +41,7 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 	private DashboardDataProvider dashboardDataProvider;
 	private HighChart chart;
 	private Label subtitleLabel;
+	private final PythogentBurdenComponent pythogentBurdenComponent=new PythogentBurdenComponent();
 
 	public CaseCountDifferenceComponent(DashboardDataProvider dashboardDataProvider) {
 
@@ -61,6 +63,7 @@ public class CaseCountDifferenceComponent extends VerticalLayout {
 		addComponent(subtitleLabel);
 		addComponent(chart);
 		setExpandRatio(chart, 1);
+		addComponent(pythogentBurdenComponent);
 
 		setMargin(new MarginInfo(true, true, false, true));
 		setSpacing(false);

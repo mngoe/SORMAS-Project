@@ -282,11 +282,13 @@ public class LoginActivity extends BaseLocalizedActivity implements ActivityComp
 					|| user.hasUserRole(UserRole.POE_INFORMANT)
 					|| user.hasUserRole(UserRole.COMMUNITY_INFORMANT)
 					|| user.hasUserRole(UserRole.HOSPITAL_INFORMANT))) {
-				NavigationHelper.goToCases(LoginActivity.this);
+				NavigationHelper.goToHp(LoginActivity.this);
+				//NavigationHelper.goToCases(LoginActivity.this);
 			} else if (ConfigProvider.hasUserRight(UserRight.CONTACT_VIEW) && user.hasUserRole(UserRole.CONTACT_OFFICER)) {
 				NavigationHelper.goToContacts(LoginActivity.this);
 			} else if (ConfigProvider.hasUserRight(UserRight.CASE_VIEW)) {
-				NavigationHelper.goToCases(LoginActivity.this);
+				NavigationHelper.goToHp(LoginActivity.this);
+				//NavigationHelper.goToCases(LoginActivity.this);
 			} else {
 				NavigationHelper.goToSettings(LoginActivity.this);
 			}

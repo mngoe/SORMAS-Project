@@ -55,6 +55,7 @@ public interface SampleFacade {
 
 	List<String> getAllActiveUuids();
 	List<String> getAllUuids();
+	List<String> getTypeTest();
 
 	List<SampleDto> getByUuids(List<String> uuids);
 

@@ -27,6 +27,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -116,10 +117,12 @@ public class EnterPinActivity extends AppCompatActivity implements NotificationC
 						hint.setText(R.string.hint_new_pin_again);
 					}
 				} else {
+					Log.e("Oceac App", String.valueOf(R.string.heading_enter_pin));
 					headline.setText(R.string.heading_enter_pin);
 					hint.setText(R.string.hint_enter_current_pin);
 				}
 			} else {
+				Log.e("Oceac App", String.valueOf(R.string.heading_enter_pin));
 				headline.setText(R.string.heading_enter_pin);
 				hint.setText(R.string.hint_enter_authentication_pin);
 			}

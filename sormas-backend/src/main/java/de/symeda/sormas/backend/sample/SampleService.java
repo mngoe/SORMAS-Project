@@ -77,6 +77,7 @@ import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.facility.Facility;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.person.Person;
+import de.symeda.sormas.backend.sample.Sample;
 import de.symeda.sormas.backend.sormastosormas.share.shareinfo.SormasToSormasShareInfoService;
 import de.symeda.sormas.backend.user.User;
 import de.symeda.sormas.backend.user.UserService;
@@ -192,7 +193,14 @@ public class SampleService extends AbstractCoreAdoService<Sample> {
 
 		return em.createQuery(cq).getResultList();
 	}
-	
+	public List<String> getTypeTest() {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<String> cq = cb.createQuery(String.class);
+		Root<Sample> from = cq.from(getElementClass());
+		cq.select(from.get(Sample.REQUESTED_PATHOGEN_TESTS_STRING));
+
+		return em.createQuery(cq).getResultList();
+	}
 	/**
 	 * Returns the sample that refers to the sample identified by the sampleUuid.
 	 *
