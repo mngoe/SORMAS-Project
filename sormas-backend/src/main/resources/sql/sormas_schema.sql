@@ -8767,4 +8767,10 @@ ALTER TABLE users ADD COLUMN numberofexaminatedpeople varchar;
 ALTER TABLE users ADD COLUMN numberofnonexaminatedpeople varchar;
 ALTER TABLE users_history ADD COLUMN numberofexaminatedpeople varchar;
 ALTER TABLE users_history ADD COLUMN numberofnonexaminatedpeople varchar;
+
+-- 2022-05-29 Add new fields for aggrated report #21449
+INSERT INTO schema_version (version_number, comment) VALUES (425, 'Add new fields for aggrated report #21449');
+ALTER TABLE aggregatereport ADD COLUMN numerator bigint;
+ALTER TABLE aggregatereport ADD COLUMN denominator bigint;
+ALTER TABLE aggregatereport ADD COLUMN proportion double precision;
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

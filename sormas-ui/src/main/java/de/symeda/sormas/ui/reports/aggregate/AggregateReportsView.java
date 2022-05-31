@@ -47,9 +47,13 @@ public class AggregateReportsView extends AbstractView {
 	private AggregateReportCriteria criteria;
 
 	private AggregateReportsGrid grid;
+	private AggregateReportsIndicatorsGrid firstgrid;
 	private VerticalLayout gridLayout;
+	private VerticalLayout secondgridLayout;
 	private Button btnExport;
+	private Button btnExportIndic;
 	private Button btnCreate;
+	private Button btnCreateIndic;
 	private Button btnEdit;
 
 	// Filters
@@ -76,15 +80,26 @@ public class AggregateReportsView extends AbstractView {
 		if (criteriaUninitialized) {
 			criteria.epiWeekFrom(DateHelper.getEpiWeek(new Date())).epiWeekTo(DateHelper.getEpiWeek(new Date()));
 		}
+		Label evenTitle = new Label(I18nProperties.getCaption(Captions.EventIndicators));
+		CssStyles.style(evenTitle, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
+		
+		Label AggRepporttitle = new Label(I18nProperties.getCaption(Captions.aggregateDiseaseRepport));
+		CssStyles.style(AggRepporttitle, CssStyles.H2, CssStyles.VSPACE_4, CssStyles.VSPACE_TOP_NONE);
 
 		grid = new AggregateReportsGrid();
+		firstgrid = new AggregateReportsIndicatorsGrid();
 		grid.setCriteria(criteria);
+		firstgrid.setCriteria(criteria);
 		gridLayout = new VerticalLayout();
 		gridLayout.addComponent(createFilterBar(user));
+		gridLayout.addComponent(evenTitle);
+		gridLayout.addComponent(firstgrid);
+		gridLayout.addComponent(AggRepporttitle);
 		gridLayout.addComponent(grid);
 		gridLayout.setMargin(true);
 		gridLayout.setSpacing(false);
 		gridLayout.setSizeFull();
+		gridLayout.setExpandRatio(firstgrid, 1);
 		gridLayout.setExpandRatio(grid, 1);
 		gridLayout.setStyleName("crud-main-layout");
 
@@ -94,15 +109,22 @@ public class AggregateReportsView extends AbstractView {
 			btnCreate = ButtonHelper.createIconButton(
 				Captions.aggregateReportNewAggregateReport,
 				VaadinIcons.PLUS_CIRCLE,
-				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), false),
+				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), false, true),
+				ValoTheme.BUTTON_PRIMARY);
+			btnCreateIndic = ButtonHelper.createIconButton(
+				Captions.aggregateReportNewIndicatorReport,
+				VaadinIcons.PLUS_CIRCLE,
+				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> firstgrid.reload(), false, false),
 				ValoTheme.BUTTON_PRIMARY);
 
 			addHeaderComponent(btnCreate);
 
+			addHeaderComponent(btnCreateIndic);
+
 			btnEdit = ButtonHelper.createIconButton(
 				Captions.aggregateReportEditAggregateReport,
 				VaadinIcons.EDIT,
-				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), true),
+				e -> ControllerProvider.getAggregateReportController().openEditOrCreateWindow(() -> grid.reload(), true, true),
 				ValoTheme.BUTTON_PRIMARY);
 			btnEdit.setVisible(false);
 
@@ -111,12 +133,18 @@ public class AggregateReportsView extends AbstractView {
 
 		if (UserProvider.getCurrent().hasUserRight(UserRight.AGGREGATE_REPORT_EXPORT)) {
 			btnExport = ButtonHelper.createIconButton(Captions.export, VaadinIcons.DOWNLOAD, null, ValoTheme.BUTTON_PRIMARY);
+			btnExportIndic = ButtonHelper.createIconButton(Captions.exportIndic, VaadinIcons.DOWNLOAD, null, ValoTheme.BUTTON_PRIMARY);
 
 			addHeaderComponent(btnExport);
+			addHeaderComponent(btnExportIndic);
 
 			StreamResource streamResource = GridExportStreamResource.createStreamResource(grid, ExportEntityName.AGGREGATE_REPORTS);
 			FileDownloader fileDownloader = new FileDownloader(streamResource);
 			fileDownloader.extend(btnExport);
+
+			StreamResource streamResourceIndic = GridExportStreamResource.createStreamResource(firstgrid, ExportEntityName.AGGREGATE_REPORTS);
+			FileDownloader fileDownloaderIndic = new FileDownloader(streamResourceIndic);
+			fileDownloaderIndic.extend(btnExportIndic);
 		}
 
 		binder.readBean(criteria);
@@ -124,6 +152,7 @@ public class AggregateReportsView extends AbstractView {
 			try {
 				binder.writeBean(criteria);
 				grid.reload();
+				firstgrid.reload();
 			} catch (ValidationException ex) {
 				// No validation needed
 			}

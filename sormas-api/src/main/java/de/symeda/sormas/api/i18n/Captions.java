@@ -149,12 +149,16 @@ public interface Captions {
 	String AdditionalTest_wbcCount = "AdditionalTest.wbcCount";
 	String additionalTestNewTest = "additionalTestNewTest";
 	String address = "address";
+	String aggregateDiseaseRepport = "aggregateDiseaseRepport";
 	String AggregateReport_deaths = "AggregateReport.deaths";
+	String AggregateReport_denominator = "AggregateReport.denominator";
 	String AggregateReport_disease = "AggregateReport.disease";
 	String AggregateReport_healthFacility = "AggregateReport.healthFacility";
 	String AggregateReport_labConfirmations = "AggregateReport.labConfirmations";
 	String AggregateReport_newCases = "AggregateReport.newCases";
+	String AggregateReport_numerator = "AggregateReport.numerator";
 	String AggregateReport_pointOfEntry = "AggregateReport.pointOfEntry";
+	String AggregateReport_proportion = "AggregateReport.proportion";
 	String aggregateReportDeathsShort = "aggregateReportDeathsShort";
 	String aggregateReportDiscardSelection = "aggregateReportDiscardSelection";
 	String aggregateReportEditAggregateReport = "aggregateReportEditAggregateReport";
@@ -163,6 +167,7 @@ public interface Captions {
 	String aggregateReportLastWeek = "aggregateReportLastWeek";
 	String aggregateReportNewAggregateReport = "aggregateReportNewAggregateReport";
 	String aggregateReportNewCasesShort = "aggregateReportNewCasesShort";
+	String aggregateReportNewIndicatorReport = "aggregateReportNewIndicatorReport";
 	String aggregateReportReportFound = "aggregateReportReportFound";
 	String aggregateReportThisWeek = "aggregateReportThisWeek";
 	String all = "all";
@@ -1083,6 +1088,7 @@ public interface Captions {
 	String eventGroups = "eventGroups";
 	String eventGroupsMultiple = "eventGroupsMultiple";
 	String eventGroupsView = "eventGroupsView";
+	String EventIndicators = "EventIndicators";
 	String eventLinkToCases = "eventLinkToCases";
 	String eventLinkToContacts = "eventLinkToContacts";
 	String eventLinkToEventsWithinTheSameFacility = "eventLinkToEventsWithinTheSameFacility";
@@ -1156,6 +1162,7 @@ public interface Captions {
 	String exportDetailed = "exportDetailed";
 	String exportEditExportConfiguration = "exportEditExportConfiguration";
 	String exportFollowUp = "exportFollowUp";
+	String exportIndic = "exportIndic";
 	String exportInfrastructureData = "exportInfrastructureData";
 	String exportNewExportConfiguration = "exportNewExportConfiguration";
 	String exportSamples = "exportSamples";

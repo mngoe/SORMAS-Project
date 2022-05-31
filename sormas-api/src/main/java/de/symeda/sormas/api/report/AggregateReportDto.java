@@ -26,6 +26,9 @@ public class AggregateReportDto extends EntityDto {
 	public static final String NEW_CASES = "newCases";
 	public static final String LAB_CONFIRMATIONS = "labConfirmations";
 	public static final String DEATHS = "deaths";
+	public static final String NUMERATOR = "numerator";
+	public static final String DENOMINATOR = "denominator";
+	public static final String PROPORTION = "proportion";
 
 	private UserReferenceDto reportingUser;
 	private Disease disease;
@@ -38,6 +41,9 @@ public class AggregateReportDto extends EntityDto {
 	private Integer newCases;
 	private Integer labConfirmations;
 	private Integer deaths;
+	private Integer numerator;
+	private Integer denominator;
+	private Double proportion;
 
 	public UserReferenceDto getReportingUser() {
 		return reportingUser;
@@ -125,6 +131,30 @@ public class AggregateReportDto extends EntityDto {
 
 	public void setDeaths(Integer deaths) {
 		this.deaths = deaths;
+	}
+
+	public int getNumerator() {
+		return numerator;
+	}
+
+	public void setNumerator(int numerator) {
+		this.numerator = numerator;
+	}
+
+	public int getDenominator() {
+		return denominator;
+	}
+
+	public void setDenominator(int denominator) {
+		this.denominator = denominator;
+	}
+
+	public double getProportion() {
+		return proportion;
+	}
+
+	public void setProportion(double proportion) {
+		this.proportion = proportion;
 	}
 
 	public static AggregateReportDto build() {

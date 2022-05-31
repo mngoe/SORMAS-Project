@@ -1,5 +1,8 @@
 package de.symeda.sormas.backend.report;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +23,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.text.DecimalFormat;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.report.AggregateReportCriteria;
@@ -47,6 +51,8 @@ import de.symeda.sormas.backend.util.ModelConstants;
 @Stateless(name = "AggregateReportFacade")
 public class AggregateReportFacadeEjb implements AggregateReportFacade {
 
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	private static final DecimalFormat df = new DecimalFormat();
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
 
@@ -102,7 +108,7 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 	}
 
 	@Override
-	public List<AggregatedCaseCountDto> getIndexList(AggregateReportCriteria criteria) {
+	public List<AggregatedCaseCountDto> getIndexList(AggregateReportCriteria criteria, boolean diseases) {
 
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
@@ -122,25 +128,71 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 			root.get(AggregateReport.DISEASE),
 			cb.sum(root.get(AggregateReport.NEW_CASES)),
 			cb.sum(root.get(AggregateReport.LAB_CONFIRMATIONS)),
-			cb.sum(root.get(AggregateReport.DEATHS)));
+			cb.sum(root.get(AggregateReport.DEATHS)),
+			cb.sum(root.get(AggregateReport.NUMERATOR)),
+			cb.sum(root.get(AggregateReport.DENOMINATOR)),
+			cb.sum(root.get(AggregateReport.PROPORTION))
+			);
 		cq.groupBy(root.get(AggregateReport.DISEASE));
 
 		List<Object[]> resultList = em.createQuery(cq).getResultList();
 		Map<Disease, AggregatedCaseCountDto> reportSet = new HashMap<>();
 
 		for (Object[] result : resultList) {
-			reportSet.put(
+			if (diseases == true) {
+				if (!((Disease) result[0]).getName().contains("PROP")
+				&& !((Disease) result[0]).getName().contains("NB")){
+					reportSet.put(
 				(Disease) result[0],
 				new AggregatedCaseCountDto(
 					(Disease) result[0],
 					((Long) result[1]).intValue(),
 					((Long) result[2]).intValue(),
-					((Long) result[3]).intValue()));
+					((Long) result[3]).intValue(),
+					((Long) result[4]).intValue(),
+					((Long) result[5]).intValue(),
+					((Double) result[6]).intValue()
+					));
+				}
+			}
+			if (diseases == false) {
+				int n = ((Long) result[4]).intValue();
+				int d = ((Long) result[5]).intValue();
+				df.setMaximumFractionDigits(2);
+				double prop = Double.valueOf(df.format((float) n / (float) d));
+				logger.info("numerateur {} ", n);
+				logger.info("denom {} ", d);
+				logger.info("proportion {} ", (float) n / (float) d);
+				if (((Disease) result[0]).getName().contains("PROP")
+				|| ((Disease) result[0]).getName().contains("NB")){
+					reportSet.put(
+				(Disease) result[0],
+				new AggregatedCaseCountDto(
+					(Disease) result[0],
+					((Long) result[1]).intValue(),
+					((Long) result[2]).intValue(),
+					((Long) result[3]).intValue(),
+					((Long) result[4]).intValue(),
+					((Long) result[5]).intValue(),
+					prop));
+				}
+			}
 		}
 
 		for (Disease disease : diseaseConfigurationFacade.getAllDiseases(true, false, false)) {
 			if (!reportSet.containsKey(disease)) {
-				reportSet.put(disease, new AggregatedCaseCountDto(disease, 0, 0, 0));
+				if (diseases == true) {
+					if (!disease.getName().contains("PROP")
+					&& !disease.getName().contains("NB")){
+						reportSet.put(disease, new AggregatedCaseCountDto(disease, 0, 0, 0, 0, 0, 0));
+					}
+				}
+				if (diseases == false) {
+					if (disease.getName().contains("PROP")
+					|| disease.getName().contains("NB")){
+						reportSet.put(disease, new AggregatedCaseCountDto(disease, 0, 0, 0, 0, 0, 0));
+					}
+				}
 			}
 		}
 
@@ -169,6 +221,9 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 		target.setHealthFacility(facilityService.getByReferenceDto(source.getHealthFacility()));
 		target.setPointOfEntry(pointOfEntryService.getByReferenceDto(source.getPointOfEntry()));
 		target.setNewCases(source.getNewCases());
+		target.setNumerator(source.getNumerator());
+		target.setDenominator(source.getDenominator());
+		target.setProportion(source.getProportion());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
 
@@ -193,6 +248,9 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 		target.setHealthFacility(FacilityFacadeEjb.toReferenceDto(source.getHealthFacility()));
 		target.setPointOfEntry(PointOfEntryFacadeEjb.toReferenceDto(source.getPointOfEntry()));
 		target.setNewCases(source.getNewCases());
+		target.setNumerator(source.getNumerator());
+		target.setDenominator(source.getDenominator());
+		target.setProportion(source.getProportion());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
 
