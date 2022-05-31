@@ -18,10 +18,10 @@ public class AggregateReportController {
 
 	}
 
-	public void openEditOrCreateWindow(Runnable onClose, boolean edit) {
+	public void openEditOrCreateWindow(Runnable onClose, boolean edit, boolean fetchdisease) {
 		Window window = VaadinUiUtil.createPopupWindow();
 		AggregateReportsView currentView = (AggregateReportsView) SormasUI.get().getNavigator().getCurrentView();
-		AggregateReportsEditLayout createLayout = new AggregateReportsEditLayout(window, currentView.getCriteria(), edit);
+		AggregateReportsEditLayout createLayout = new AggregateReportsEditLayout(window, currentView.getCriteria(), edit, fetchdisease);
 		window.setHeight(90, Unit.PERCENTAGE);
 		window.setWidth(createLayout.getWidth() + 64 + 20, Unit.PIXELS);
 		if (edit) {

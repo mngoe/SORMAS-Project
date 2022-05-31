@@ -10,9 +10,9 @@ import de.symeda.sormas.api.report.AggregatedCaseCountDto;
 import de.symeda.sormas.ui.utils.FilteredGrid;
 
 @SuppressWarnings("serial")
-public class AggregateReportsGrid extends FilteredGrid<AggregatedCaseCountDto, AggregateReportCriteria> {
-
-	public AggregateReportsGrid() {
+public class AggregateReportsIndicatorsGrid extends FilteredGrid<AggregatedCaseCountDto, AggregateReportCriteria> {
+	
+	public AggregateReportsIndicatorsGrid() {
 
 		super(AggregatedCaseCountDto.class);
 		setSizeFull();
@@ -21,9 +21,9 @@ public class AggregateReportsGrid extends FilteredGrid<AggregatedCaseCountDto, A
 
 		setColumns(
 			AggregatedCaseCountDto.DISEASE,
-			AggregatedCaseCountDto.NEW_CASES,
-			AggregatedCaseCountDto.LAB_CONFIRMATIONS,
-			AggregatedCaseCountDto.DEATHS);
+			AggregatedCaseCountDto.NUMERATOR,
+			AggregatedCaseCountDto.DENOMINATOR,
+			AggregatedCaseCountDto.PROPORTION);
 
 		for (Column<?, ?> column : getColumns()) {
 			column.setCaption(I18nProperties.getPrefixCaption(AggregatedCaseCountDto.I18N_PREFIX, column.getId().toString(), column.getCaption()));
@@ -35,7 +35,7 @@ public class AggregateReportsGrid extends FilteredGrid<AggregatedCaseCountDto, A
 	public void reload() {
 
 		ListDataProvider<AggregatedCaseCountDto> dataProvider =
-			DataProvider.fromStream(FacadeProvider.getAggregateReportFacade().getIndexList(getCriteria(), true).stream());
+			DataProvider.fromStream(FacadeProvider.getAggregateReportFacade().getIndexList(getCriteria(), false).stream());
 		setDataProvider(dataProvider);
 		dataProvider.refreshAll();
 	}
