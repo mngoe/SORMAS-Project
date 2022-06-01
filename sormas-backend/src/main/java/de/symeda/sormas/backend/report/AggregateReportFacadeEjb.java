@@ -1,8 +1,5 @@
 package de.symeda.sormas.backend.report;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,7 +20,6 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.text.DecimalFormat;
 
 import de.symeda.sormas.api.Disease;
 import de.symeda.sormas.api.report.AggregateReportCriteria;
@@ -51,8 +47,6 @@ import de.symeda.sormas.backend.util.ModelConstants;
 @Stateless(name = "AggregateReportFacade")
 public class AggregateReportFacadeEjb implements AggregateReportFacade {
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
-	private static final DecimalFormat df = new DecimalFormat();
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
 
@@ -156,13 +150,6 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 				}
 			}
 			if (diseases == false) {
-				int n = ((Long) result[4]).intValue();
-				int d = ((Long) result[5]).intValue();
-				df.setMaximumFractionDigits(2);
-				double prop = Double.valueOf(df.format((float) n / (float) d));
-				logger.info("numerateur {} ", n);
-				logger.info("denom {} ", d);
-				logger.info("proportion {} ", (float) n / (float) d);
 				if (((Disease) result[0]).getName().contains("PROP")
 				|| ((Disease) result[0]).getName().contains("NB")){
 					reportSet.put(
@@ -174,7 +161,7 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 					((Long) result[3]).intValue(),
 					((Long) result[4]).intValue(),
 					((Long) result[5]).intValue(),
-					prop));
+					((Double) result[6]).doubleValue()));
 				}
 			}
 		}
