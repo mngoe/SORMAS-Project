@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
+import java.text.DecimalFormat;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -50,6 +50,8 @@ import de.symeda.sormas.ui.utils.VaadinUiUtil;
 public class AggregateReportsEditLayout extends VerticalLayout {
 
 	private static final long serialVersionUID = -7806379599024578146L;
+
+	private static final DecimalFormat df = new DecimalFormat();
 
 	private Window window;
 
@@ -192,10 +194,10 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			for (AggregateReportDto report : reports.values()) {
 				String disease = report.getDisease().toString();
 				if (fetchdisease == true) {
-					if (!disease.contains("Proportion")
-					&& !disease.contains("Nombre")
-					&& !disease.contains("Number")){
-						AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease);
+					if (!disease.startsWith("Proportion")
+					&& !disease.startsWith("Nombre")
+					&& !disease.startsWith("Number")){
+						AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease, true);
 						editForm.setNewCases(report.getNewCases());
 						editForm.setLabConfirmations(report.getLabConfirmations());
 						editForm.setDeaths(report.getDeaths());
@@ -204,10 +206,14 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 					}
 				}
 				if (fetchdisease == false) {
-					if (disease.contains("Proportion")
-					|| disease.contains("Nombre")
-					|| disease.contains("Number")){
-						AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease);
+					boolean enable = true;
+					if (disease.startsWith("Proportion")
+					|| disease.startsWith("Nombre")
+					|| disease.startsWith("Number")) {
+						if (disease.startsWith("Number") || disease.startsWith("Nombre")) {
+							enable = false;
+						}
+						AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease, enable);
 						editForm.setNewCases(report.getNewCases());
 						editForm.setLabConfirmations(report.getLabConfirmations());
 						editForm.setDeaths(report.getDeaths());
@@ -220,18 +226,22 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 
 		for (String disease : diseasesWithoutReport.keySet()) {
 			if (fetchdisease == true) {
-				if (!disease.contains("Proportion")
-				&& !disease.contains("Nombre")
-				&& !disease.contains("Number")){
-					AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease);
+				if (!disease.startsWith("Proportion")
+				&& !disease.startsWith("Nombre")
+				&& !disease.startsWith("Number")) {
+					AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease, true);
 					editForms.add(editForm);
 				}
 			}
 			if (fetchdisease == false) {
-				if (disease.contains("Proportion")
-				|| disease.contains("Nombre")
-				|| disease.contains("Number")){
-					AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease);
+				boolean enable = true;
+				if (disease.startsWith("Proportion")
+				|| disease.startsWith("Nombre")
+				|| disease.startsWith("Number")){
+					if (disease.startsWith("Number") || disease.startsWith("Nombre")) {
+						enable = false;
+					}
+					AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease, enable);
 					editForms.add(editForm);
 				}
 			}
@@ -363,6 +373,11 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			return;
 		}
 
+		if (!isValidNumerator()) {
+			Notification.show(I18nProperties.getString(Strings.errorNumerFieldValidationFailed), "", Type.ERROR_MESSAGE);
+			return;
+		}
+
 		for (AggregateReportEditForm editForm : editForms) {
 
 			int deaths = 0;
@@ -370,7 +385,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			int newCases = 0;
 			int numerator = 0;
 			int denominator = 0;
-			float proportion = 0;
+			double proportion = 0;
 			if (fetchdisease == true) {
 				String deathsFieldValue = (String) editForm.getField(AggregateReportDto.DEATHS).getValue();
 				String labFieldValue = (String) editForm.getField(AggregateReportDto.LAB_CONFIRMATIONS).getValue();
@@ -393,20 +408,18 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 				String proportionFieldValue = (String) editForm.getField(AggregateReportDto.PROPORTION).getValue();
 				if (!numeratorFieldValue.isEmpty()) {
 					numerator = Integer.parseInt(numeratorFieldValue);
-				} else {
-					numerator = 0;
 				}
 	
 				if (!denominatorFieldValue.isEmpty()) {
 					denominator = Integer.parseInt(denominatorFieldValue);
-				} else {
-					denominator = 0;
 				}
 	
 				if (denominator > 0 && numerator >= 0){
-					proportion = numerator/denominator;
-				} else {
-					proportion = 0;
+					int n = numerator;
+					int d = denominator;
+					df.setMaximumFractionDigits(2);
+					double prop = Double.valueOf(df.format((float) n / (float) d));
+					proportion = prop;
 				}
 			}
 
@@ -414,7 +427,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			if (reports != null) {
 				report = reports.get(diseaseMap.get(editForm.getDisease()));
 			}
-			if (report != null && (deaths > 0 || labConfirmations > 0 || newCases > 0 || denominator > 0)) {
+			if (report != null && (deaths > 0 || labConfirmations > 0 || newCases > 0 || numerator > 0 || denominator > 0)) {
 				report.setDeaths(deaths);
 				report.setLabConfirmations(labConfirmations);
 				report.setNewCases(newCases);
@@ -425,7 +438,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			} else if (report != null) {
 				FacadeProvider.getAggregateReportFacade().deleteReport(report.getUuid());
 			} else {
-				if (deaths > 0 || labConfirmations > 0 || newCases > 0 || denominator > 0) {
+				if (deaths > 0 || labConfirmations > 0 || newCases > 0 || denominator > 0 || numerator > 0) {
 					AggregateReportDto newReport = AggregateReportDto.build();
 					newReport.setDeaths(deaths);
 					newReport.setDisease(diseaseMap.get(editForm.getDisease()));
@@ -468,6 +481,16 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 			}
 		}
 		return isvalid;
+	}
+
+	private boolean isValidNumerator() {
+		boolean result = true;
+		for (AggregateReportEditForm editForm : editForms) {
+			if (!editForm.isValidNumerator()) {
+				result = false;
+			}
+		}
+		return result;
 	}
 
 	private void updateEpiweekFields() {

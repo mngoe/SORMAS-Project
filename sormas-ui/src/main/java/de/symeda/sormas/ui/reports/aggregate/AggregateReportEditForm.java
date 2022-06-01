@@ -26,6 +26,8 @@ public class AggregateReportEditForm extends AbstractEditForm<AggregateReportDto
 
 	private boolean fetchdisease;
 
+	private boolean enable;
+
 	private boolean initialized = false;
 
 	private static final String HTML_LAYOUT = LayoutUtil.fluidRow(
@@ -44,12 +46,14 @@ public class AggregateReportEditForm extends AbstractEditForm<AggregateReportDto
 	private TextField denominatorField;
 	private TextField proportionField;
 
-	public AggregateReportEditForm(String disease, boolean fetchdisease) {
+	public AggregateReportEditForm(String disease, boolean fetchdisease, boolean enable) {
 		super(AggregateReportDto.class, AggregateReportDto.I18N_PREFIX);
 
 		this.disease = disease;
 
 		this.fetchdisease = fetchdisease;
+
+		this.enable = enable;
 
 		initialized = true;
 		addFields();
@@ -90,10 +94,14 @@ public class AggregateReportEditForm extends AbstractEditForm<AggregateReportDto
 			denominatorField = addField(AggregateReportDto.DENOMINATOR);
 			denominatorField.setInputPrompt("Dénominateur");
 			denominatorField.setConversionError(I18nProperties.getValidationError(Validations.onlyNumbersAllowed, denominatorField.getCaption()));
+			if (enable == false) {
+				denominatorField.setInputPrompt("N/A");
+				denominatorField.setEnabled(false);
+			}
 			proportionField = addField(AggregateReportDto.PROPORTION);
 			proportionField.setInputPrompt("Auto");
-			proportionField.setEnabled(false);
-			CssStyles.style(CssStyles.CAPTION_HIDDEN, diseaseLabel, numeratorField, denominatorField, proportionField);
+			proportionField.setVisible(false);
+			CssStyles.style(CssStyles.CAPTION_HIDDEN, diseaseLabel, numeratorField, proportionField, denominatorField);
 		}
 	}
 
@@ -117,11 +125,27 @@ public class AggregateReportEditForm extends AbstractEditForm<AggregateReportDto
 		if (fetchdisease == false) {
 			if (!StringUtils.isBlank(numeratorField.getValue())) {
 				if (StringUtils.isBlank(denominatorField.getValue())) {
-					res = false;
+					if (enable == true) {
+						res = false;
+					}
 				}
 			}
 		}
 		return res;
+	}
+
+	public boolean isValidNumerator() {
+		boolean value = true;
+		if (fetchdisease == false) {
+			if (!StringUtils.isBlank(denominatorField.getValue())) {
+				if (StringUtils.isBlank(numeratorField.getValue())) {
+					if (enable == true) {
+						value = false;
+					}
+				}
+			}
+		}
+		return value;
 	}
 
 	public String getDisease() {

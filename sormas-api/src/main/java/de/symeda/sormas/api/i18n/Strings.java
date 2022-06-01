@@ -279,6 +279,7 @@ public interface Strings {
 	String errorNoPopulationDataFound = "errorNoPopulationDataFound";
 	String errorNoPopulationDataLocations = "errorNoPopulationDataLocations";
 	String errorNotRequiredRights = "errorNotRequiredRights";
+	String errorNumerFieldValidationFailed = "errorNumerFieldValidationFailed";
 	String errorOccurred = "errorOccurred";
 	String errorProblemOccurred = "errorProblemOccurred";
 	String errorProcessingTemplate = "errorProcessingTemplate";
