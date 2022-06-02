@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import java.text.DecimalFormat;
 import javax.ejb.EJB;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -49,6 +49,8 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 
 	@PersistenceContext(unitName = ModelConstants.PERSISTENCE_UNIT_NAME)
 	private EntityManager em;
+
+	private static final DecimalFormat df = new DecimalFormat();
 
 	@EJB
 	private AggregateReportService service;
@@ -152,6 +154,13 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 			if (diseases == false) {
 				if (((Disease) result[0]).getName().contains("PROP")
 				|| ((Disease) result[0]).getName().contains("NB")){
+				int n = ((Long) result[4]).intValue();
+				int d = ((Long) result[5]).intValue();
+				double prop = 0;
+				if (d > 0 && n >= 0) {
+					df.setMaximumFractionDigits(2);
+					prop = Double.valueOf(df.format((float) n / (float) d));
+				}
 					reportSet.put(
 				(Disease) result[0],
 				new AggregatedCaseCountDto(
@@ -161,7 +170,7 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 					((Long) result[3]).intValue(),
 					((Long) result[4]).intValue(),
 					((Long) result[5]).intValue(),
-					((Double) result[6]).doubleValue()));
+					prop));
 				}
 			}
 		}
