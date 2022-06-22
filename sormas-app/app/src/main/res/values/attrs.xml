@@ -66,6 +66,11 @@
     <attr name="caption" format="string"/>
     <attr name="captionCapitalized" format="boolean" />
     <attr name="captionItalic" format="boolean" />
+    <attr name="allowedDaysInFuture" format="integer" />
+    <attr name="excludeEmptyItem" format="boolean" />
+    <attr name="softRequired" format="boolean" />
+    <attr name="text" format="string"/>
+    <attr name="marginBottomOffsetResId" format="integer"/>
     <attr name="slim" format="boolean" />
     <attr name="distinct" format="boolean" />
     <attr name="iconOnly" format="boolean" />

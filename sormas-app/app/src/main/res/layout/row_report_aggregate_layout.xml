@@ -88,6 +88,48 @@
             app:value="@={data.deaths}"
             app:showCaption="false" />
 
+        <de.symeda.sormas.app.component.controls.ControlTextEditField
+            android:id="@+id/aggregateReport_numerator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            app:inputType="number"
+            app:slim="true"
+            app:value="@={data.numerator}"
+            app:showCaption="false" />
+
+        <de.symeda.sormas.app.component.controls.ControlTextEditField
+            android:id="@+id/aggregateReport_denominator"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            app:inputType="number"
+            app:slim="true"
+            app:value="@={data.denominator}"
+            app:showCaption="false" />
+
+        <de.symeda.sormas.app.component.controls.ControlTextEditField
+            android:id="@+id/aggregateReport_proportion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="12dp"
+            app:inputType="numberDecimal"
+            app:slim="true"
+            app:value="@={data.proportion}"
+            app:showCaption="false" />
+
     </LinearLayout>
 
 </layout>

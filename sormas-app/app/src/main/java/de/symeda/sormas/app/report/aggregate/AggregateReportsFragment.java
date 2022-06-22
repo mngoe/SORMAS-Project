@@ -1,5 +1,6 @@
 package de.symeda.sormas.app.report.aggregate;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableArrayList;
@@ -115,6 +117,7 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 		});
 
 		contentBinding.submitReport.setOnClickListener(view -> showSubmitCaseNumbersConfirmationDialog());
+		contentBinding.submitnewReport.setOnClickListener(view -> showSecondSubmitCaseNumbersConfirmationDialog());
 	}
 
 	public void setEpiWeek(EpiWeek epiWeek) {
@@ -160,14 +163,32 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 		reports = DatabaseHelper.getAggregateReportDao().getReportsByEpiWeekAndUser(epiWeek, user);
 
 		contentBinding.reportContent.removeAllViews();
+		contentBinding.newrepContent.removeAllViews();
 
 		Date latestLocalChangeDate = null;
 
 		for (AggregateReport report : reports) {
 			LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			RowReportAggregateLayoutBinding binding =
-				DataBindingUtil.inflate(inflater, R.layout.row_report_aggregate_layout, contentBinding.reportContent, true);
-			binding.setData(report);
+			if (!report.getDisease().getName().contains("PROP") && !report.getDisease().getName().contains("NB")) {
+				RowReportAggregateLayoutBinding binding =
+						DataBindingUtil.inflate(inflater, R.layout.row_report_aggregate_layout, contentBinding.reportContent, true);
+				binding.aggregateReportNumerator.setVisibility(View.GONE);
+				binding.aggregateReportDenominator.setVisibility(View.GONE);
+				binding.aggregateReportProportion.setVisibility(View.GONE);
+				binding.setData(report);
+			}
+			if (report.getDisease().getName().contains("PROP") || report.getDisease().getName().contains("NB")) {
+				RowReportAggregateLayoutBinding secondbinding =
+						DataBindingUtil.inflate(inflater, R.layout.row_report_aggregate_layout, contentBinding.newrepContent, true);
+				secondbinding.aggregateReportNewCases.setVisibility(View.GONE);
+				secondbinding.aggregateReportLabConfirmations.setVisibility(View.GONE);
+				secondbinding.aggregateReportDeaths.setVisibility(View.GONE);
+				secondbinding.aggregateReportProportion.setVisibility(View.GONE);
+				if (report.getDisease().getName().contains("NB")){
+					secondbinding.aggregateReportDenominator.setVisibility(View.GONE);
+				}
+				secondbinding.setData(report);
+			}
 
 			if (latestLocalChangeDate == null || (report.getLocalChangeDate() != null && latestLocalChangeDate.before(report.getLocalChangeDate()))) {
 				latestLocalChangeDate = report.getLocalChangeDate();
@@ -202,25 +223,33 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 				@Override
 				public void doInBackground(TaskResultHolder resultHolder) throws DaoException {
 					for (AggregateReport report : reports) {
-						// Don't save if a generated report has no case numbers
-						if (report.getLocalChangeDate() == null
-							&& (report.getNewCases() == null || report.getNewCases() == 0)
-							&& (report.getLabConfirmations() == null || report.getLabConfirmations() == 0)
-							&& (report.getDeaths() == null || report.getDeaths() == 0)) {
-							continue;
-						}
+						if (!report.getDisease().getName().contains("PROP") && !report.getDisease().getName().contains("NB")) {
+							// Don't save if a generated report has no case numbers
+							if (report.getLocalChangeDate() == null
+									&& (report.getNewCases() == null || report.getNewCases() == 0)
+									&& (report.getLabConfirmations() == null || report.getLabConfirmations() == 0)
+									&& (report.getDeaths() == null || report.getDeaths() == 0)) {
+								continue;
+							}
 
-						if (report.getNewCases() == null) {
-							report.setNewCases(0);
-						}
-						if (report.getLabConfirmations() == null) {
-							report.setLabConfirmations(0);
-						}
-						if (report.getDeaths() == null) {
-							report.setDeaths(0);
-						}
+							if (report.getNewCases() == null) {
+								report.setNewCases(0);
+							}
+							if (report.getLabConfirmations() == null) {
+								report.setLabConfirmations(0);
+							}
+							if (report.getDeaths() == null) {
+								report.setDeaths(0);
+							}
 
-						DatabaseHelper.getAggregateReportDao().saveAndSnapshot(report);
+							report.setNumerator(0);
+
+							report.setDenominator(1);
+
+							report.setProportion(0.0);
+
+							DatabaseHelper.getAggregateReportDao().saveAndSnapshot(report);
+						}
 					}
 				}
 
@@ -239,6 +268,89 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 
 					NotificationHelper
 						.showNotification((NotificationContext) getActivity(), NotificationType.SUCCESS, R.string.message_case_numbers_submitted);
+				}
+			}.executeOnThreadPool();
+		});
+
+		confirmationDialog.show();
+	}
+
+	private void showSecondSubmitCaseNumbersConfirmationDialog() {
+		final ConfirmationDialog confirmationDialog = new ConfirmationDialog(
+				getActivity(),
+				R.string.heading_confirmation_dialog,
+				R.string.info_add_events_before_report_submit,
+				R.string.action_submit_events,
+				R.string.action_cancel);
+
+		confirmationDialog.setPositiveCallback(() -> {
+			confirmCaseNumbersTask = new DefaultAsyncTask(getContext()) {
+
+				@Override
+				public void onPreExecute() {
+					getBaseActivity().showPreloader();
+				}
+
+				@Override
+				public void doInBackground(TaskResultHolder resultHolder) throws DaoException {
+					for (AggregateReport report : reports) {
+						if (report.getDisease().getName().contains("PROP") || report.getDisease().getName().contains("NB")) {
+							// Don't save if a generated report has no case numbers
+							//if (report.getLocalChangeDate() == null
+								//	&& (report.getNumerator() == null || report.getNumerator() == 0)
+								//	&& (report.getDenominator() == null || report.getDenominator() == 0)) {
+								//continue;
+							//}
+
+							int numerator = 0;
+							int denominator = 0;
+							double prop = 0.0;
+
+							if (report.getNumerator() == null) {
+								report.setNumerator(0);
+							} else {
+								numerator = report.getNumerator();
+							}
+							if (report.getDenominator() == null || report.getDenominator() == 0) {
+								report.setDenominator(1);
+							} else {
+								denominator = report.getDenominator();
+							}
+
+							if (numerator >= 0 && denominator > 0) {
+								DecimalFormat df = new DecimalFormat();
+								df.setMaximumFractionDigits(2);
+								prop = Float.valueOf(df.format(numerator / denominator));
+							}
+
+							report.setProportion(prop);
+
+							report.setNewCases(0);
+
+							report.setLabConfirmations(0);
+
+							report.setDeaths(0);
+
+							DatabaseHelper.getAggregateReportDao().saveAndSnapshot(report);
+						}
+					}
+				}
+
+				@Override
+				protected void onPostExecute(AsyncTaskResult<TaskResultHolder> taskResult) {
+					super.onPostExecute(taskResult);
+					getBaseActivity().hidePreloader();
+					Intent intent = new Intent(getContext(), AggregateReportsActivity.class);
+					getContext().startActivity(intent);
+
+					if (!taskResult.getResultStatus().isSuccess()) {
+						NotificationHelper
+								.showNotification((NotificationContext) getActivity(), NotificationType.ERROR, taskResult.getResultStatus().getMessage());
+						return;
+					}
+
+					NotificationHelper
+							.showNotification((NotificationContext) getActivity(), NotificationType.SUCCESS, R.string.message_case_numbers_submitted);
 				}
 			}.executeOnThreadPool();
 		});
