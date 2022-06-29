@@ -336,7 +336,7 @@ public class ConfigFacadeEjb implements ConfigFacade {
 		if (appUrl != null) {
 			appUrl = appUrl.replaceAll(VERSION_PLACEHOLER, InfoProvider.get().getVersion());
 		}
-		logger.info("App URL is {}", appUrl)
+		logger.info("App URL is {}", appUrl);
 		return appUrl;
 	}
 
