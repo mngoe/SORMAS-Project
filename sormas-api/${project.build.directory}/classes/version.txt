@@ -1,1 +1,1 @@
-${project.version}
+1.65.1
