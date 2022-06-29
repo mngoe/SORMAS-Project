@@ -120,6 +120,7 @@
     <string name="action_save_pathogen_test">Save Pathogen Test</string>
     <string name="action_edit_pathogen_test">Edit Pathogen Test</string>
     <string name="action_submit_case_numbers">Submit Case Numbers</string>
+    <string name="action_submit_events">Submit Indicators</string>
     <string name="action_kex_lbds">LBDS Key Exchange</string>
     <string name="action_sync_person_lbds">LBDS Sync Persons</string>
     <string name="action_sync_case_lbds">LBDS Sync Cases</string>
@@ -258,6 +259,8 @@
     <string name="caption_aggregate_deaths_abbr">D</string>
     <string name="caption_start_date_existing">Existing start date</string>
     <string name="caption_end_date_existing">Existing end date</string>
+    <string name="caption_events_report">INDICATORS &amp; EVENTS</string>
+    <string name="caption_diseases_report">DISEASES REPORT</string>
     `
     <string name="confirmation_action">Are you sure you want to do this?</string>
     <string name="confirmation_delete">Are you sure you want to delete this record?</string>
@@ -465,6 +468,7 @@
     <string name="indicator_warning">WARN</string>
 
     <string name="info_add_cases_before_report_submit">Are you sure you want to submit these case numbers for the selected epi week?</string>
+    <string name="info_add_events_before_report_submit">Are you sure you want to submit these indicators ?</string>
     <string name="info_app_download">Downloading new SORMAS version... Depending on your internet connection, this may take a while.</string>
     <string name="info_create_person">If you could <b>not</b> find a person that matches the personal details you have entered, click the \"Create\" button.</string>
     <string name="info_create_event">If you could <b>not</b> find the Event in the list above, click the \"Create\" button.</string>

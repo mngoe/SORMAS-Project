@@ -116,6 +116,7 @@
     <string name="action_save_pathogen_test">Enregistrer le test d\'agent pathogène</string>
     <string name="action_edit_pathogen_test">Modifier le test de pathogène</string>
     <string name="action_submit_case_numbers">Soumettre les numéros de cas</string>
+    <string name="action_submit_events">Soumettre les indicateurs</string>
     <string name="action_kex_lbds">Échange de clés LBDS</string>
     <string name="action_sync_person_lbds">Personnes Synchro LBDS</string>
     <string name="action_sync_case_lbds">Cas de synchronisation LBDS</string>
@@ -253,6 +254,8 @@
     <string name="caption_aggregate_deaths_abbr">D</string>
     <string name="caption_start_date_existing">Existing start date</string>
     <string name="caption_end_date_existing">Existing end date</string>
+    <string name="caption_events_report">> INDICATEURS &amp; EVENEMENTS</string>
+    <string name="caption_diseases_report">> RAPPORT CONCERNANT LES MALADIES</string>
     <string name="confirmation_action">Êtes-vous sûr de vouloir faire cela ?</string>
     <string name="confirmation_delete">Voulez-vous vraiment supprimer cet enregistrement ?</string>
     <string name="confirmation_pick_gps">Êtes-vous dans cet endroit maintenant?</string>
@@ -452,6 +455,7 @@
     <string name="indicator_soft_required">*</string>
     <string name="indicator_warning">ATTENTION</string>
     <string name="info_add_cases_before_report_submit">Êtes-vous sûr de vouloir soumettre ces numéros de cas pour la semaine épi sélectionnée ?</string>
+    <string name="info_add_events_before_report_submit">Êtes-vous sûr de vouloir soumettre ces indicateurs ?</string>
     <string name="info_app_download">Téléchargement de la nouvelle version SORMAS... En fonction de votre connexion Internet, cela peut prendre un certain temps.</string>
     <string name="info_create_person">Si vous n\'avez <b>pas</b> trouvé de personne correspondant aux données personnelles que vous avez saisies, cliquez sur le bouton \"Créer\".</string>
     <string name="info_create_event">Si vous avez pu <b>not</b> trouver l\'événement dans la liste ci-dessus, cliquez sur le bouton \"Créer\".</string>
