@@ -295,13 +295,6 @@ public class AggregateReportsFragment extends BaseReportFragment<FragmentReports
 				public void doInBackground(TaskResultHolder resultHolder) throws DaoException {
 					for (AggregateReport report : reports) {
 						if (report.getDisease().getName().contains("PROP") || report.getDisease().getName().contains("NB")) {
-							// Don't save if a generated report has no case numbers
-							//if (report.getLocalChangeDate() == null
-								//	&& (report.getNumerator() == null || report.getNumerator() == 0)
-								//	&& (report.getDenominator() == null || report.getDenominator() == 0)) {
-								//continue;
-							//}
-
 							int numerator = 0;
 							int denominator = 0;
 							double prop = 0.0;
