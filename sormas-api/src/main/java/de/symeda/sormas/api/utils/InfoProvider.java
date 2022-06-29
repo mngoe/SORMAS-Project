@@ -31,7 +31,7 @@ public class InfoProvider {
 			InputStream stream = InfoProvider.class.getResourceAsStream("/version.txt");
 			String version = DataHelper.convertStreamToString(stream);
 			// this.version = version.trim();
-			this.version = "1.65.1"
+			this.version = "1.65.1";
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
