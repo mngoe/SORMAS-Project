@@ -383,6 +383,12 @@ public class UserFacadeEjb implements UserFacade {
 		userService.ensurePersisted(user);
 
 		if (oldUser == null) {
+			if (user.getNumberofnonexaminatedpeople() == null){
+				user.setNumberofnonexaminatedpeople("");
+			}
+			if (user.getNumberofexaminatedpeople() == null){
+				user.setNumberofexaminatedpeople("");
+			}
 			userCreateEvent.fire(new UserCreateEvent(user));
 		} else {
 			userUpdateEvent.fire(new UserUpdateEvent(oldUser, user));

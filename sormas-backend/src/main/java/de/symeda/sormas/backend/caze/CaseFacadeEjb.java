@@ -1913,6 +1913,42 @@ public class CaseFacadeEjb implements CaseFacade {
 						UserRole.ADMIN_SUPERVISOR,
 						UserRole.CASE_SUPERVISOR,
 						UserRole.CONTACT_SUPERVISOR);
+					List<Region> regions = JurisdictionHelper.getCaseRegions(newCase);
+					List countryIds = new ArrayList<>();
+					List regionIds = new ArrayList<>();
+					for (Region region:regions) {
+						if (!regionIds.contains(region.getId())) {
+							regionIds.add(region.getId());
+							countryIds.add(region.getCountry().getId());
+						}
+					}
+					List<User> ObserversmessageRecipients = userService.getAllByRegionsAndUserRoles(
+						null,
+						UserRole.NATIONAL_OBSERVER);
+					List<User> RecipientsWithoutCountry = new ArrayList<>();
+					List RecipientsWithoutCountryIds = new ArrayList<>();
+
+					List<User> RecipientsWithCountry = new ArrayList<>();
+					List RecipientsWithCountryIds = new ArrayList<>();
+					for (User user:ObserversmessageRecipients) {
+						if (user.getAssociatedCountry() != null) {
+							if (countryIds.contains(user.getAssociatedCountry().getId())) {
+								if (!RecipientsWithCountryIds.contains(user.getId())) {
+									RecipientsWithCountry.add(user);
+									RecipientsWithCountryIds.add(user.getId());
+								}
+							}
+						} else {
+							if (!RecipientsWithoutCountryIds.contains(user.getId())) {
+								RecipientsWithoutCountry.add(user);
+								RecipientsWithoutCountryIds.add(user.getId());
+							}
+						}
+					}
+					messageRecipients.addAll(RecipientsWithCountry);
+					if (existingCase.getTransmitted() == YesNoUnknown.YES || newCase.getTransmitted() == YesNoUnknown.YES) {
+						messageRecipients.addAll(RecipientsWithoutCountry);
+					}
 					final Map<User, String> mapToReturn = new HashMap<>();
 					messageRecipients.forEach(
 						user -> mapToReturn.put(
