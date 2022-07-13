@@ -4,13 +4,17 @@ import de.symeda.sormas.api.infrastructure.facility.FacilityReferenceDto;
 import de.symeda.sormas.api.infrastructure.pointofentry.PointOfEntryReferenceDto;
 import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
+import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.utils.EpiWeek;
 import de.symeda.sormas.api.utils.criteria.BaseCriteria;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class AggregateReportCriteria extends BaseCriteria implements Cloneable {
 
 	public static final String REGION = "region";
+	public static final String REPORTING_DATE_FROM = "ReportingDateFrom";
+	public static final String REPORTING_DATE_TO = "ReportingDateTo";
 	public static final String DISTRICT = "district";
 	public static final String HEALTH_FACILITY = "healthFacility";
 	public static final String POINT_OF_ENTRY = "pointOfEntry";
@@ -23,6 +27,8 @@ public class AggregateReportCriteria extends BaseCriteria implements Cloneable {
 	private DistrictReferenceDto district;
 	private FacilityReferenceDto healthFacility;
 	private PointOfEntryReferenceDto pointOfEntry;
+	private Date ReportingDateFrom;
+	private Date ReportingDateTo;
 
 	public EpiWeek getEpiWeekFrom() {
 		return epiWeekFrom;
@@ -69,6 +75,24 @@ public class AggregateReportCriteria extends BaseCriteria implements Cloneable {
 		return this;
 	}
 
+	public Date getReportingDateFrom() {
+		return ReportingDateFrom;
+	}
+
+	public AggregateReportCriteria ReportingDateFrom(Date ReportingDateFrom) {
+		this.ReportingDateFrom = ReportingDateFrom;
+		return this;
+	}
+
+	public Date getReportingDateTo() {
+		return ReportingDateTo;
+	}
+
+	public AggregateReportCriteria ReportingDateTo(Date ReportingDateTo) {
+		this.ReportingDateTo = ReportingDateTo;
+		return this;
+	}
+
 	public PointOfEntryReferenceDto getPointOfEntry() {
 		return pointOfEntry;
 	}
@@ -96,6 +120,14 @@ public class AggregateReportCriteria extends BaseCriteria implements Cloneable {
 
 	public void setHealthFacility(FacilityReferenceDto healthFacility) {
 		this.healthFacility = healthFacility;
+	}
+
+	public void setReportingDateFrom(Date ReportingDateFrom) {
+		this.ReportingDateFrom = ReportingDateFrom;
+	}
+
+	public void setReportingDateTo(Date ReportingDateTo) {
+		this.ReportingDateTo = ReportingDateTo;
 	}
 
 	public void setPointOfEntry(PointOfEntryReferenceDto pointOfEntry) {

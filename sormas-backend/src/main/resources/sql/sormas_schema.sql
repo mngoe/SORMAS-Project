@@ -8773,4 +8773,8 @@ INSERT INTO schema_version (version_number, comment) VALUES (425, 'Add new field
 ALTER TABLE aggregatereport ADD COLUMN numerator bigint;
 ALTER TABLE aggregatereport ADD COLUMN denominator bigint;
 ALTER TABLE aggregatereport ADD COLUMN proportion double precision;
+
+-- 2022-07-12 Add new fields for aggrated report #21612
+INSERT INTO schema_version (version_number, comment) VALUES (426, 'Add new fields for aggrated report #21612');
+ALTER TABLE aggregatereport ADD COLUMN reportingdate timestamp without time zone;
 -- *** Insert new sql commands BEFORE this line. Remember to always consider _history tables. ***

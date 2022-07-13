@@ -38,6 +38,12 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.ExportEntityName;
 import de.symeda.sormas.ui.utils.GridExportStreamResource;
+import com.vaadin.ui.DateField;
+import de.symeda.sormas.ui.utils.DateFormatHelper;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 public class AggregateReportsView extends AbstractView {
@@ -45,6 +51,8 @@ public class AggregateReportsView extends AbstractView {
 	public static final String VIEW_NAME = "aggregatereports";
 
 	private AggregateReportCriteria criteria;
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private AggregateReportsGrid grid;
 	private AggregateReportsIndicatorsGrid firstgrid;
@@ -64,6 +72,8 @@ public class AggregateReportsView extends AbstractView {
 	private ComboBox<FacilityReferenceDto> cbFacilityFilter;
 	private ComboBox<PointOfEntryReferenceDto> cbPoeFilter;
 	private ComboBox<Integer> cbFromYearFilter;
+	private DateField dateFieldFrom = new DateField();
+	private DateField dateFieldTo = new DateField();
 	private ComboBox<EpiWeek> cbFromEpiWeekFilter;
 	private ComboBox<Integer> cbToYearFilter;
 	private ComboBox<EpiWeek> cbToEpiWeekFilter;
@@ -148,15 +158,7 @@ public class AggregateReportsView extends AbstractView {
 		}
 
 		binder.readBean(criteria);
-		binder.addValueChangeListener(e -> {
-			try {
-				binder.writeBean(criteria);
-				grid.reload();
-				firstgrid.reload();
-			} catch (ValidationException ex) {
-				// No validation needed
-			}
-		});
+		binder.addValueChangeListener(e -> updateData());
 
 		if (user.getRegion() != null) {
 			cbRegionFilter.setValue(user.getRegion());
@@ -274,6 +276,18 @@ public class AggregateReportsView extends AbstractView {
 			cbFromYearFilter.setId("yearFrom");
 			cbFromYearFilter.addValueChangeListener(e -> clearFilterIfEmpty(cbFromYearFilter, cbFromEpiWeekFilter));
 			cbFromYearFilter.addValueChangeListener(e -> updateButtonVisibility());
+			dateFieldFrom.setId(AggregateReportCriteria.REPORTING_DATE_FROM);
+			dateFieldFrom.addValueChangeListener( e -> {
+					updateButtonVisibility();
+					updateData();
+				});
+			dateFieldTo.addValueChangeListener( e -> {
+				updateButtonVisibility();
+				updateData();
+			});
+
+			dateFieldTo.setId(AggregateReportCriteria.REPORTING_DATE_TO);
+			// dateFieldTo.addValueChangeListener(e -> updateButtonVisibility());
 			cbFromEpiWeekFilter = new ComboBox<>();
 			cbFromEpiWeekFilter.setId(AggregateReportCriteria.EPI_WEEK_FROM);
 			cbFromEpiWeekFilter.addValueChangeListener(e -> updateButtonVisibility());
@@ -294,15 +308,19 @@ public class AggregateReportsView extends AbstractView {
 					cbFromEpiWeekFilter.setItems(DateHelper.createEpiWeekList(e.getValue()));
 				}
 			});
+			dateFieldFrom.setDateFormat(DateFormatHelper.getDateFormatPattern());
+			dateFieldTo.setDateFormat(DateFormatHelper.getDateFormatPattern());
+			dateFieldFrom.setWidth(250, Unit.PIXELS);
+			dateFieldTo.setWidth(250, Unit.PIXELS);
 			if (criteria.getEpiWeekFrom() != null) {
 				cbFromYearFilter.setValue(criteria.getEpiWeekFrom().getYear());
 			}
-			hlSecondFilterRow.addComponent(cbFromYearFilter);
-
+			// hlSecondFilterRow.addComponent(cbFromYearFilter);
+			hlSecondFilterRow.addComponent(dateFieldFrom);
 			cbFromEpiWeekFilter.setWidth(200, Unit.PIXELS);
 			cbFromEpiWeekFilter.setPlaceholder(I18nProperties.getString(Strings.epiWeek));
 			binder.bind(cbFromEpiWeekFilter, AggregateReportCriteria.EPI_WEEK_FROM);
-			hlSecondFilterRow.addComponent(cbFromEpiWeekFilter);
+			// hlSecondFilterRow.addComponent(cbFromEpiWeekFilter);
 
 			Label lblTo = new Label(I18nProperties.getCaption(Captions.to));
 			CssStyles.style(lblTo, CssStyles.LABEL_BOLD, CssStyles.VSPACE_TOP_4);
@@ -320,12 +338,13 @@ public class AggregateReportsView extends AbstractView {
 			if (criteria.getEpiWeekTo() != null) {
 				cbToYearFilter.setValue(criteria.getEpiWeekTo().getYear());
 			}
-			hlSecondFilterRow.addComponent(cbToYearFilter);
+			// hlSecondFilterRow.addComponent(cbToYearFilter);
 
 			cbToEpiWeekFilter.setWidth(200, Unit.PIXELS);
 			cbToEpiWeekFilter.setPlaceholder(I18nProperties.getString(Strings.epiWeek));
 			binder.bind(cbToEpiWeekFilter, AggregateReportCriteria.EPI_WEEK_TO);
-			hlSecondFilterRow.addComponent(cbToEpiWeekFilter);
+			// hlSecondFilterRow.addComponent(cbToEpiWeekFilter);
+			hlSecondFilterRow.addComponent(dateFieldTo);
 		}
 		filterLayout.addComponent(hlSecondFilterRow);
 
@@ -344,6 +363,31 @@ public class AggregateReportsView extends AbstractView {
 		}
 	}
 
+	private void updateData() {
+		SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+		Date finalDateFrom = null;
+		Date finalDateTo = null;
+		try {
+			if (dateFieldFrom.getValue() != null) {
+				finalDateFrom = format.parse(dateFieldFrom.getValue().toString());
+			}
+			if (dateFieldTo.getValue() != null) {
+				finalDateTo = format.parse(dateFieldTo.getValue().toString());
+			}
+		} catch (ParseException ex) {
+			logger.info("Erreur fatale lors du parsing de la date des dates {}", ex);
+		}
+		criteria.setReportingDateFrom(finalDateFrom);
+		criteria.setReportingDateTo(finalDateTo);
+		try {
+			binder.writeBean(criteria);
+			grid.reload();
+			firstgrid.reload();
+		} catch (ValidationException ex) {
+			// No validation needed
+		}
+	}
+	
 	private void updateButtonVisibility() {
 		if (btnEdit != null && btnCreate != null) {
 			if (cbRegionFilter.getValue() != null

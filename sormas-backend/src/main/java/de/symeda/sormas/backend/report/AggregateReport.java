@@ -14,6 +14,7 @@ import de.symeda.sormas.backend.infrastructure.pointofentry.PointOfEntry;
 import de.symeda.sormas.backend.infrastructure.district.District;
 import de.symeda.sormas.backend.infrastructure.region.Region;
 import de.symeda.sormas.backend.user.User;
+import java.util.Date;
 
 @Entity(name = "aggregatereport")
 public class AggregateReport extends AbstractDomainObject {
@@ -34,6 +35,7 @@ public class AggregateReport extends AbstractDomainObject {
 	public static final String NUMERATOR = "numerator";
 	public static final String DENOMINATOR = "denominator";
 	public static final String PROPORTION = "proportion";
+	public static final String REPORTINGDATE = "reportingdate";
 
 	private User reportingUser;
 	private Disease disease;
@@ -49,6 +51,7 @@ public class AggregateReport extends AbstractDomainObject {
 	private Integer numerator;
 	private Integer denominator;
 	private Double proportion;
+	private Date reportingdate;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn
@@ -168,6 +171,15 @@ public class AggregateReport extends AbstractDomainObject {
 
 	public void setDenominator(Integer denominator) {
 		this.denominator = denominator;
+	}
+
+	@Column
+	public Date getReportingdate() {
+		return reportingdate;
+	}
+
+	public void setReportingdate(Date reportingdate) {
+		this.reportingdate = reportingdate;
 	}
 
 	@Column

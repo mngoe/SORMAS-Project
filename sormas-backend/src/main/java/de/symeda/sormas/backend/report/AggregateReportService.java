@@ -1,5 +1,5 @@
 package de.symeda.sormas.backend.report;
-
+import java.util.Date;
 import java.util.List;
 
 import javax.ejb.LocalBean;
@@ -58,22 +58,17 @@ public class AggregateReportService extends AdoServiceWithUserFilter<AggregateRe
 				filter,
 				cb.equal(from.join(AggregateReport.POINT_OF_ENTRY, JoinType.LEFT).get(PointOfEntry.UUID), criteria.getPointOfEntry().getUuid()));
 		}
-		if (criteria.getEpiWeekFrom() != null || criteria.getEpiWeekTo() != null) {
-			if (criteria.getEpiWeekFrom() == null) {
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.le(from.get(AggregateReport.YEAR), criteria.getEpiWeekTo().getYear()));
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.le(from.get(AggregateReport.EPI_WEEK), criteria.getEpiWeekTo().getWeek()));
-			} else if (criteria.getEpiWeekTo() == null) {
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.ge(from.get(AggregateReport.YEAR), criteria.getEpiWeekFrom().getYear()));
-				filter = CriteriaBuilderHelper.and(cb, filter, cb.ge(from.get(AggregateReport.EPI_WEEK), criteria.getEpiWeekFrom().getWeek()));
+
+		if (criteria.getReportingDateFrom() != null || criteria.getReportingDateTo() != null) {
+			if (criteria.getReportingDateFrom() == null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.lessThanOrEqualTo(from.get(AggregateReport.REPORTINGDATE).as(Date.class), criteria.getReportingDateTo()));
+			} else if (criteria.getReportingDateTo() == null) {
+				filter = CriteriaBuilderHelper.and(cb, filter, cb.greaterThanOrEqualTo(from.get(AggregateReport.REPORTINGDATE).as(Date.class), criteria.getReportingDateFrom()));
 			} else {
 				filter = CriteriaBuilderHelper.and(
 					cb,
 					filter,
-					cb.between(from.get(AggregateReport.YEAR), criteria.getEpiWeekFrom().getYear(), criteria.getEpiWeekTo().getYear()));
-				filter = CriteriaBuilderHelper.and(
-					cb,
-					filter,
-					cb.between(from.get(AggregateReport.EPI_WEEK), criteria.getEpiWeekFrom().getWeek(), criteria.getEpiWeekTo().getWeek()));
+					cb.between(from.get(AggregateReport.REPORTINGDATE), criteria.getReportingDateFrom(), criteria.getReportingDateTo()));
 			}
 		}
 

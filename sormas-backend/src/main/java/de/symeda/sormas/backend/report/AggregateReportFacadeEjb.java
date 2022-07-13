@@ -220,6 +220,7 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 		target.setNumerator(source.getNumerator());
 		target.setDenominator(source.getDenominator());
 		target.setProportion(source.getProportion());
+		target.setReportingdate(source.getReportingdate());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
 
@@ -247,6 +248,7 @@ public class AggregateReportFacadeEjb implements AggregateReportFacade {
 		target.setNumerator(source.getNumerator());
 		target.setDenominator(source.getDenominator());
 		target.setProportion(source.getProportion());
+		target.setReportingdate(source.getReportingdate());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
 

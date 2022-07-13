@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import com.vaadin.ui.DateField;
+import de.symeda.sormas.ui.utils.DateFormatHelper;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -39,7 +44,8 @@ import de.symeda.sormas.ui.utils.ButtonHelper;
 import de.symeda.sormas.ui.utils.CssStyles;
 import de.symeda.sormas.ui.utils.EpiWeekFilterOption;
 import de.symeda.sormas.ui.utils.VaadinUiUtil;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * @author Christopher Riedel
  * 
@@ -55,8 +61,11 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 
 	private Window window;
 
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	private OptionGroup epiweekOptions;
 	private ComboBox<Integer> comboBoxYear;
+	private DateField dateField = new DateField();
 	private ComboBox<EpiWeek> comboBoxEpiweek;
 	private ComboBox<RegionReferenceDto> comboBoxRegion;
 	private ComboBox<DistrictReferenceDto> comboBoxDistrict;
@@ -82,12 +91,15 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		epiweekOptions.addStyleNames(ValoTheme.OPTIONGROUP_HORIZONTAL, CssStyles.OPTIONGROUP_HORIZONTAL_PRIMARY);
 		CssStyles.style(epiweekOptions, ValoTheme.OPTIONGROUP_HORIZONTAL);
 		epiweekOptions.addValueChangeListener(e -> updateEpiweekFields());
-		if (!edit) {
-			addComponent(epiweekOptions);
-		}
+		// if (!edit) {
+		// 	addComponent(epiweekOptions);
+		// }
 
 		comboBoxYear = new ComboBox<>(I18nProperties.getString(Strings.year), DateHelper.getYearsToNow(2000));
 		comboBoxYear.setWidth(250, Unit.PIXELS);
+		dateField.setWidth(250, Unit.PIXELS);
+		dateField.setCaption("Date");
+		dateField.setDateFormat(DateFormatHelper.getDateFormatPattern());
 		comboBoxYear.addValueChangeListener(e -> updateEpiweekFields());
 
 		comboBoxEpiweek = new ComboBox<>(I18nProperties.getString(Strings.epiWeek));
@@ -95,7 +107,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		if (!edit) {
 			comboBoxEpiweek.addValueChangeListener(e -> checkForExistingData());
 		}
-		addComponent(new HorizontalLayout(comboBoxYear, comboBoxEpiweek));
+		addComponent(new HorizontalLayout(dateField));
 
 		comboBoxRegion = new ComboBox<>();
 		comboBoxRegion.setWidth(250, Unit.PIXELS);
@@ -444,6 +456,14 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 					newReport.setDisease(diseaseMap.get(editForm.getDisease()));
 					newReport.setDistrict(comboBoxDistrict.getValue());
 					newReport.setEpiWeek(comboBoxEpiweek.getValue().getWeek());
+					SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+					Date finalDate = new Date();
+					try {
+						finalDate = format.parse(dateField.getValue().toString());
+					} catch (ParseException e) {
+						logger.info("Erreur lors du parsing de la date {}", e);
+					}
+					newReport.setReportingdate(finalDate);
 					newReport.setHealthFacility(comboBoxFacility.getValue());
 					newReport.setLabConfirmations(labConfirmations);
 					newReport.setNewCases(newCases);

@@ -8,6 +8,7 @@ import de.symeda.sormas.api.infrastructure.district.DistrictReferenceDto;
 import de.symeda.sormas.api.infrastructure.region.RegionReferenceDto;
 import de.symeda.sormas.api.user.UserReferenceDto;
 import de.symeda.sormas.api.utils.DataHelper;
+import java.util.Date;
 
 public class AggregateReportDto extends EntityDto {
 
@@ -29,6 +30,7 @@ public class AggregateReportDto extends EntityDto {
 	public static final String NUMERATOR = "numerator";
 	public static final String DENOMINATOR = "denominator";
 	public static final String PROPORTION = "proportion";
+	public static final String REPORTINGDATE = "reportingdate";
 
 	private UserReferenceDto reportingUser;
 	private Disease disease;
@@ -44,6 +46,7 @@ public class AggregateReportDto extends EntityDto {
 	private Integer numerator;
 	private Integer denominator;
 	private Double proportion;
+	private Date reportingdate;
 
 	public UserReferenceDto getReportingUser() {
 		return reportingUser;
@@ -155,6 +158,14 @@ public class AggregateReportDto extends EntityDto {
 
 	public void setProportion(double proportion) {
 		this.proportion = proportion;
+	}
+
+	public Date getReportingdate() {
+		return reportingdate;
+	}
+
+	public void setReportingdate(Date reportingdate) {
+		this.reportingdate = reportingdate;
 	}
 
 	public static AggregateReportDto build() {
