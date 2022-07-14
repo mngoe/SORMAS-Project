@@ -105,7 +105,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		comboBoxEpiweek = new ComboBox<>(I18nProperties.getString(Strings.epiWeek));
 		comboBoxEpiweek.setWidth(250, Unit.PIXELS);
 		if (!edit) {
-			comboBoxEpiweek.addValueChangeListener(e -> checkForExistingData());
+			comboBoxEpiweek.addValueChangeListener(e -> checkForExistingData(fetchdisease));
 		}
 		addComponent(new HorizontalLayout(dateField));
 
@@ -162,7 +162,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 				comboBoxPoe.clear();
 			}
 			if (!edit) {
-				checkForExistingData();
+				checkForExistingData(fetchdisease);
 			}
 		});
 
@@ -175,7 +175,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 				comboBoxFacility.clear();
 			}
 			if (!edit) {
-				checkForExistingData();
+				checkForExistingData(fetchdisease);
 			}
 		});
 		addComponent(new HorizontalLayout(comboBoxFacility, comboBoxPoe));
@@ -226,9 +226,9 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 							enable = false;
 						}
 						AggregateReportEditForm editForm = new AggregateReportEditForm(disease, fetchdisease, enable);
-						editForm.setNewCases(report.getNewCases());
-						editForm.setLabConfirmations(report.getLabConfirmations());
-						editForm.setDeaths(report.getDeaths());
+						editForm.setNewCases(0);
+						editForm.setLabConfirmations(0);
+						editForm.setDeaths(0);
 						editForms.add(editForm);
 						diseasesWithoutReport.remove(disease);
 					}
@@ -308,10 +308,19 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		}
 	}
 
-	private void checkForExistingData() {
-		if (comboBoxEpiweek.getValue() != null && (comboBoxFacility.getValue() != null || comboBoxPoe.getValue() != null) && !popUpIsShown) {
+	private void checkForExistingData(boolean fetchdisease) {
+		if (dateField.getValue() != null && (comboBoxFacility.getValue() != null || comboBoxPoe.getValue() != null) && !popUpIsShown) {
 			AggregateReportCriteria criteria = new AggregateReportCriteria();
 			criteria.setDistrict(comboBoxDistrict.getValue());
+			SimpleDateFormat format = new SimpleDateFormat("yyy-MM-dd");
+			Date fdate = new Date();
+			try {
+				fdate = format.parse(dateField.getValue().toString());
+			} catch (ParseException e) {
+				logger.info("Erreur lors du parsing de la seconde date {}", e);
+			}
+			criteria.setReportingDateFrom(fdate);
+			criteria.setReportingDateTo(fdate);
 			criteria.setEpiWeekFrom(comboBoxEpiweek.getValue());
 			criteria.setEpiWeekTo(comboBoxEpiweek.getValue());
 			criteria.setHealthFacility(comboBoxFacility.getValue());
@@ -328,7 +337,7 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 					@Override
 					public void accept(Boolean edit) {
 						if (edit) {
-							switchToEditMode();
+							switchToEditMode(fetchdisease);
 						} else {
 							comboBoxFacility.clear();
 							comboBoxPoe.clear();
@@ -352,16 +361,36 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		epiweekOptions.setValue(EpiWeekFilterOption.THIS_WEEK);
 	}
 
-	private void switchToEditMode() {
+	private void switchToEditMode(boolean fetchdisease) {
 
 		window.setCaption(I18nProperties.getString(Strings.headingEditAggregateReport));
 		for (AggregateReportEditForm editForm : editForms) {
 			String disease = editForm.getDisease();
 			AggregateReportDto report = reports.get(diseaseMap.get(disease));
 			if (report != null) {
-				editForm.setNewCases(report.getNewCases());
-				editForm.setLabConfirmations(report.getLabConfirmations());
-				editForm.setDeaths(report.getDeaths());
+				if (fetchdisease == true) {
+					editForm.setNewCases(report.getNewCases());
+					editForm.setLabConfirmations(report.getLabConfirmations());
+					editForm.setDeaths(report.getDeaths());
+					editForm.setNumerator(0);
+					editForm.setDenominator(1);
+					editForm.setProportion(0);
+				}
+				if (fetchdisease == false) {
+					if (editForm.getDisease().startsWith("Proportion")
+					|| editForm.getDisease().startsWith("Nombre")
+					|| editForm.getDisease().startsWith("Number")) {
+						if (editForm.getDisease().startsWith("Number") || editForm.getDisease().startsWith("Nombre")) {
+							editForm.setNumerator(report.getNumerator());
+							editForm.setDenominator(1);
+							editForm.setProportion(0);
+						} else {
+							editForm.setNumerator(report.getNumerator());
+							editForm.setDenominator(report.getDenominator());
+							editForm.setProportion(report.getProportion());
+						}
+					}
+				}
 				diseasesWithoutReport.remove(disease);
 			}
 		}
