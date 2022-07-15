@@ -171,9 +171,9 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 		comboBoxPoe.setCaption(I18nProperties.getPrefixCaption(AggregateReportDto.I18N_PREFIX, AggregateReportDto.POINT_OF_ENTRY));
 		comboBoxPoe.setEnabled(false);
 		comboBoxPoe.addValueChangeListener(e -> {
-			if (comboBoxPoe.getValue() != null) {
-				comboBoxFacility.clear();
-			}
+			// if (comboBoxPoe.getValue() != null) {
+			// 	comboBoxFacility.clear();
+			// }
 			if (!edit) {
 				checkForExistingData(fetchdisease);
 			}
@@ -339,8 +339,9 @@ public class AggregateReportsEditLayout extends VerticalLayout {
 						if (edit) {
 							switchToEditMode(fetchdisease);
 						} else {
-							comboBoxFacility.clear();
-							comboBoxPoe.clear();
+							;
+							// comboBoxFacility.clear();
+							// comboBoxPoe.clear();
 						}
 						popUpIsShown = false;
 					}
