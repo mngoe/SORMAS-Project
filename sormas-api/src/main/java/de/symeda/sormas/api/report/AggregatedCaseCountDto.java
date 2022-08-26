@@ -14,18 +14,27 @@ public class AggregatedCaseCountDto implements Serializable {
 	public static final String NEW_CASES = "newCases";
 	public static final String LAB_CONFIRMATIONS = "labConfirmations";
 	public static final String DEATHS = "deaths";
+	public static final String NUMERATOR = "numerator";
+	public static final String DENOMINATOR = "denominator";
+	public static final String PROPORTION = "proportion";
 
 	private Disease disease;
 	private int newCases;
 	private int labConfirmations;
 	private int deaths;
+	private int numerator;
+	private int denominator;
+	private double proportion;
 
-	public AggregatedCaseCountDto(Disease disease, int newCases, int labConfirmations, int deaths) {
+	public AggregatedCaseCountDto(Disease disease, int newCases, int labConfirmations, int deaths, int numerator, int denominator, double proportion) {
 
 		this.disease = disease;
 		this.newCases = newCases;
 		this.labConfirmations = labConfirmations;
 		this.deaths = deaths;
+		this.numerator = numerator;
+		this.denominator = denominator;
+		this.proportion = proportion;
 	}
 
 	public Disease getDisease() {
@@ -58,6 +67,30 @@ public class AggregatedCaseCountDto implements Serializable {
 
 	public void setDeaths(int deaths) {
 		this.deaths = deaths;
+	}
+
+	public int getNumerator() {
+		return numerator;
+	}
+
+	public void setNumerator(int numerator) {
+		this.numerator = numerator;
+	}
+
+	public int getDenominator() {
+		return denominator;
+	}
+
+	public void setDenominator(int denominator) {
+		this.denominator = denominator;
+	}
+
+	public double getProportion() {
+		return proportion;
+	}
+
+	public void setProportion(double proportion) {
+		this.proportion = proportion;
 	}
 
 	@Override

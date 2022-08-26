@@ -141,6 +141,12 @@
                 style="@style/DarkColorStyle"
                 />
 
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/logo_siseac" />
+
         </LinearLayout>
 
     </ScrollView>

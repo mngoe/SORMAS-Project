@@ -116,6 +116,7 @@
     <string name="action_save_pathogen_test">Guardar prueba de patógeno</string>
     <string name="action_edit_pathogen_test">Editar prueba de patógeno</string>
     <string name="action_submit_case_numbers">Enviar números de casos</string>
+    <string name="action_submit_events">Presentar indicadores</string>
     <string name="action_kex_lbds">LBDS Key Exchange</string>
     <string name="action_sync_person_lbds">LBDS Sync Persons</string>
     <string name="action_sync_case_lbds">LBDS Sync Cases</string>
@@ -253,6 +254,8 @@
     <string name="caption_aggregate_deaths_abbr">D</string>
     <string name="caption_start_date_existing">Existing start date</string>
     <string name="caption_end_date_existing">Existing end date</string>
+    <string name="caption_events_report">> INDICADORES Y EVENTOS</string>
+    <string name="caption_diseases_report">> INFORME SOBRE ENFERMEDADES</string>
     <string name="confirmation_action">¿Estás seguro de que quieres hacer esto?</string>
     <string name="confirmation_delete">¿Estás seguro de que deseas borrar este registro?</string>
     <string name="confirmation_pick_gps">¿Te encuentras en este lugar ahora?</string>
@@ -452,6 +455,7 @@
     <string name="indicator_soft_required">*</string>
     <string name="indicator_warning">ALERTA</string>
     <string name="info_add_cases_before_report_submit">¿Está seguro de que desea enviar estos números de casos para la semana epi seleccionada?</string>
+    <string name="info_add_events_before_report_submit">¿Está seguro de que desea enviar estos indicadores ?</string>
     <string name="info_app_download">Descargando la nueva versión de SORMAS... Dependiendo de tu conexión a internet, esto puede tardar un tiempo.</string>
     <string name="info_create_person">Si no pudiste <b/> encontrar a una persona que coincida con los datos personales que has introducido, haz clic en el botón \"Crear\".</string>
     <string name="info_create_event">If you could <b>not</b> find the Event in the list above, click the \"Create\" button.</string>
@@ -643,4 +647,5 @@
     <string name="caption_facility_type_group">Facility category</string>
     <string name="caption_facility_type">Facility type</string>
     <string name="value_vaccine_date_unknown">Vaccination Date N/A</string>
+    <string name="heading_alerte_precoce">SISTEMA DE ALERTA TEMPRANA PARA LA LUCHA CONTRA LA PANDEMIA DE COVID-19</string>
 </resources>

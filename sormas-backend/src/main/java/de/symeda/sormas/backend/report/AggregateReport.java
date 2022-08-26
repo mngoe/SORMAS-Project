@@ -31,6 +31,9 @@ public class AggregateReport extends AbstractDomainObject {
 	public static final String NEW_CASES = "newCases";
 	public static final String LAB_CONFIRMATIONS = "labConfirmations";
 	public static final String DEATHS = "deaths";
+	public static final String NUMERATOR = "numerator";
+	public static final String DENOMINATOR = "denominator";
+	public static final String PROPORTION = "proportion";
 
 	private User reportingUser;
 	private Disease disease;
@@ -43,6 +46,9 @@ public class AggregateReport extends AbstractDomainObject {
 	private Integer newCases;
 	private Integer labConfirmations;
 	private Integer deaths;
+	private Integer numerator;
+	private Integer denominator;
+	private Double proportion;
 
 	@ManyToOne(cascade = {})
 	@JoinColumn
@@ -144,5 +150,32 @@ public class AggregateReport extends AbstractDomainObject {
 
 	public void setDeaths(Integer deaths) {
 		this.deaths = deaths;
+	}
+
+	@Column
+	public Integer getNumerator() {
+		return numerator;
+	}
+
+	public void setNumerator(Integer numerator) {
+		this.numerator = numerator;
+	}
+
+	@Column
+	public Integer getDenominator() {
+		return denominator;
+	}
+
+	public void setDenominator(Integer denominator) {
+		this.denominator = denominator;
+	}
+
+	@Column
+	public Double getProportion() {
+		return proportion;
+	}
+
+	public void setProportion(Double proportion) {
+		this.proportion = proportion;
 	}
 }

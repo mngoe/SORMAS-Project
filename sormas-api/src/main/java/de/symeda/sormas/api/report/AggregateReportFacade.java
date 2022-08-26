@@ -17,7 +17,7 @@ public interface AggregateReportFacade {
 
 	List<String> getAllUuids();
 
-	List<AggregatedCaseCountDto> getIndexList(AggregateReportCriteria criteria);
+	List<AggregatedCaseCountDto> getIndexList(AggregateReportCriteria criteria, boolean diseases);
 
 	List<AggregateReportDto> getList(AggregateReportCriteria criteria);
 

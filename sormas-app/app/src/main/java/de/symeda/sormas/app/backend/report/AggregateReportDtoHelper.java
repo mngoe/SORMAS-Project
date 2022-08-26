@@ -60,6 +60,9 @@ public class AggregateReportDtoHelper extends AdoDtoHelper<AggregateReport, Aggr
 		target.setNewCases(source.getNewCases());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
+		target.setNumerator(source.getNumerator());
+		target.setDenominator(source.getDenominator());
+		target.setProportion(source.getProportion());
 	}
 
 	@Override
@@ -105,5 +108,8 @@ public class AggregateReportDtoHelper extends AdoDtoHelper<AggregateReport, Aggr
 		target.setNewCases(source.getNewCases());
 		target.setLabConfirmations(source.getLabConfirmations());
 		target.setDeaths(source.getDeaths());
+		target.setNumerator(source.getNumerator());
+		target.setDenominator(source.getDenominator());
+		target.setProportion(source.getProportion());
 	}
 }

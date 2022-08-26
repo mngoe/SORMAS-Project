@@ -256,6 +256,7 @@ public interface Strings {
 	String errorCreatingTemplateDirectory = "errorCreatingTemplateDirectory";
 	String errorDeletingDocument = "errorDeletingDocument";
 	String errorDeletingDocumentTemplate = "errorDeletingDocumentTemplate";
+	String errorDenomFieldValidationFailed = "errorDenomFieldValidationFailed";
 	String errorDocumentGeneration = "errorDocumentGeneration";
 	String errorEntityOutdated = "errorEntityOutdated";
 	String errorEventFromAnotherJurisdiction = "errorEventFromAnotherJurisdiction";
@@ -278,6 +279,7 @@ public interface Strings {
 	String errorNoPopulationDataFound = "errorNoPopulationDataFound";
 	String errorNoPopulationDataLocations = "errorNoPopulationDataLocations";
 	String errorNotRequiredRights = "errorNotRequiredRights";
+	String errorNumerFieldValidationFailed = "errorNumerFieldValidationFailed";
 	String errorOccurred = "errorOccurred";
 	String errorProblemOccurred = "errorProblemOccurred";
 	String errorProcessingTemplate = "errorProcessingTemplate";
@@ -805,6 +807,7 @@ public interface Strings {
 	String infoUserSyncProcess = "infoUserSyncProcess";
 	String infoWeeklyReportsView = "infoWeeklyReportsView";
 	String labelActualLongSeed = "labelActualLongSeed";
+	String labellibelle = "labellibelle";
 	String labelNumberOfAreas = "labelNumberOfAreas";
 	String labelNumberOfCommunities = "labelNumberOfCommunities";
 	String labelNumberOfContinents = "labelNumberOfContinents";
@@ -816,6 +819,7 @@ public interface Strings {
 	String labelNumberOfSubcontinents = "labelNumberOfSubcontinents";
 	String labelNumberOfTemplates = "labelNumberOfTemplates";
 	String labelNumberOfUsers = "labelNumberOfUsers";
+	String labelvalue = "labelvalue";
 	String lastTwoDays = "lastTwoDays";
 	String lastTwoWeeks = "lastTwoWeeks";
 	String lastTwoYears = "lastTwoYears";

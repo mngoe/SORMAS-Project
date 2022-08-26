@@ -35,7 +35,7 @@ public class AggregateReportsGrid extends FilteredGrid<AggregatedCaseCountDto, A
 	public void reload() {
 
 		ListDataProvider<AggregatedCaseCountDto> dataProvider =
-			DataProvider.fromStream(FacadeProvider.getAggregateReportFacade().getIndexList(getCriteria()).stream());
+			DataProvider.fromStream(FacadeProvider.getAggregateReportFacade().getIndexList(getCriteria(), true).stream());
 		setDataProvider(dataProvider);
 		dataProvider.refreshAll();
 	}
